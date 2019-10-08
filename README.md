@@ -8,7 +8,7 @@ This solution contains two projects. The first is a PoC which can execute DLL ho
 
 Visual Studio Community 2019
 Release|x86
-Release|64
+Release|x64
 
 # Usage
 
