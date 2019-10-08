@@ -1,0 +1,15 @@
+
+*.ipch
+*.db
+*.suo
+*.log
+*.obj
+*.tlog
+*.iobj
+*.ipdb
+*.pdb
+*.exe
+*.opendb
+*.db-shm
+*.db-wal
+*.txt
