@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <list>
+#include <map>
 #ifdef _WIN64
 #pragma pack(push, 8) // Bug fix for strange x64 bug, sizeof PROCESSENTRY struct in 64-bit is unaligned and will break Process32First, with error code ERROR_BAD_LENGTH
 #include <Tlhelp32.h>
@@ -46,18 +47,18 @@ list<MEMORY_BASIC_INFORMATION*> QueryProcessMem(uint32_t dwPid) {
 void EnumProcessMem(uint32_t dwTargetPid, uint8_t* pBaseAddress = (uint8_t*)0x00400000) {
 	list<MEMORY_BASIC_INFORMATION*> ProcessMem = QueryProcessMem(dwTargetPid);
 
-	for (list<MEMORY_BASIC_INFORMATION*>::const_iterator i = ProcessMem.begin(); i != ProcessMem.end(); ++i) {
-		if (pBaseAddress == (uint8_t*)-1 || (*i)->AllocationBase == (void*)pBaseAddress) {
+	for (list<MEMORY_BASIC_INFORMATION*>::const_iterator RecordItr = ProcessMem.begin(); RecordItr != ProcessMem.end(); ++RecordItr) {
+		if (pBaseAddress == (uint8_t*)-1 || (*RecordItr)->AllocationBase == (void*)pBaseAddress) {
 			printf(
-				"0x%p\r\n"
+				"* Allocated base 0x%p\r\n"
 				"  Base: 0x%p\r\n"
 				"  Size: %d\r\n",
-				(*i)->AllocationBase,
-				(*i)->BaseAddress,
-				(*i)->RegionSize);
+				(*RecordItr)->AllocationBase,
+				(*RecordItr)->BaseAddress,
+				(*RecordItr)->RegionSize);
 
 			printf("  State: ");
-			switch ((*i)->State)
+			switch ((*RecordItr)->State)
 			{
 			case MEM_COMMIT:
 				printf("MEM_COMMIT\r\n");
@@ -69,11 +70,11 @@ void EnumProcessMem(uint32_t dwTargetPid, uint8_t* pBaseAddress = (uint8_t*)0x00
 				printf("MEM_FREE\r\n");
 				break;
 			default:
-				printf("Invalid?\r\n");
+				printf("?\r\n");
 			}
 
 			printf("  Type: ");
-			switch ((*i)->Type)
+			switch ((*RecordItr)->Type)
 			{
 			case MEM_IMAGE:
 				printf("MEM_IMAGE\r\n");
@@ -85,70 +86,196 @@ void EnumProcessMem(uint32_t dwTargetPid, uint8_t* pBaseAddress = (uint8_t*)0x00
 				printf("MEM_PRIVATE\r\n");
 				break;
 			default:
-				printf("Invalid?\r\n");
+				printf("N/A\r\n");
 			}
 
-			printf("  Current permissions: 0x%08x\r\n", (*i)->Protect);
-			printf("  Original permissions: 0x%08x\r\n", (*i)->AllocationProtect);
+			printf("  Current permissions: 0x%08x\r\n", (*RecordItr)->Protect);
+			printf("  Original permissions: 0x%08x\r\n", (*RecordItr)->AllocationProtect);
 		}
 	}
 }
 
+class MemoryPermissionRecord { // Record takes list of mem basic info structs, and sorts them into a map. Class can be used to show the map.
+protected:
+	map<uint32_t, map<uint32_t, uint32_t>>* MemPermMap; // Primary key is the memory type, secondary map key is the permission attribute (and its pair value is the count).
+
+public:
+	void UpdateMap(list<MEMORY_BASIC_INFORMATION*> MemBasicRecords) {
+		for (list<MEMORY_BASIC_INFORMATION*>::const_iterator RecordItr = MemBasicRecords.begin(); RecordItr != MemBasicRecords.end(); ++RecordItr) {
+			if (!MemPermMap->count((*RecordItr)->Type)) {
+				MemPermMap->insert(make_pair((*RecordItr)->Type, map<uint32_t, uint32_t>()));
+			}
+
+			map<uint32_t, uint32_t>& CountMap = MemPermMap->at((*RecordItr)->Type);
+
+			if (!CountMap.count((*RecordItr)->Protect)) {
+				CountMap.insert(make_pair((*RecordItr)->Protect, 0));
+			}
+
+			CountMap[(*RecordItr)->Protect]++;
+		}
+	}
+
+	~MemoryPermissionRecord() {
+		//
+	}
+
+	MemoryPermissionRecord(list<MEMORY_BASIC_INFORMATION*> MemBasicRecords) {
+		MemPermMap = new map<uint32_t, map<uint32_t, uint32_t>>();
+		UpdateMap(MemBasicRecords);
+	}
+
+	void ShowRecords() {
+		for (map<uint32_t, map<uint32_t, uint32_t>>::const_iterator Itr = MemPermMap->begin(); Itr != MemPermMap->end(); ++Itr) {
+			switch (Itr->first) {
+			case MEM_IMAGE:
+				printf("~ Image memory:\r\n");
+				break;
+			case MEM_MAPPED:
+				printf("~ Mapped memory:\r\n");
+				break;
+			case MEM_PRIVATE:
+				printf("~ Private memory:\r\n");
+				break;
+			default:
+				printf("~ Unknown memory (type 0x%08x):\r\n", Itr->first);
+				break;
+			}
+
+			int32_t nTotalRegions = 0;
+
+			for (map<uint32_t, uint32_t>::const_iterator Itr2 = Itr->second.begin(); Itr2 != Itr->second.end(); ++Itr2) {
+				nTotalRegions += Itr2->second;
+			}
+
+			printf("  Total: %d\r\n", nTotalRegions);
+
+			for (map<uint32_t, uint32_t>::const_iterator Itr2 = Itr->second.begin(); Itr2 != Itr->second.end(); ++Itr2) {
+				switch (Itr2->first) {
+				case PAGE_READONLY:
+					printf("  PAGE_READONLY: %d (%f%%)\r\n", Itr2->second, (float)Itr2->second / nTotalRegions * 100.0);
+					break;
+				case PAGE_READWRITE:
+					printf("  PAGE_READWRITE: %d (%f%%)\r\n", Itr2->second, (float)Itr2->second / nTotalRegions * 100.0);
+					break;
+				case PAGE_EXECUTE_READ:
+					printf("  PAGE_EXECUTE_READ: %d (%f%%)\r\n", Itr2->second, (float)Itr2->second / nTotalRegions * 100.0);
+					break;
+				case PAGE_EXECUTE_READWRITE:
+					printf("  PAGE_EXECUTE_READWRITE: %d (%f%%)\r\n", Itr2->second, (float)Itr2->second / nTotalRegions * 100.0);
+					break;
+				case PAGE_EXECUTE_WRITECOPY:
+					printf("  PAGE_EXECUTE_WRITECOPY: %d (%f%%)\r\n", Itr2->second, (float)Itr2->second / nTotalRegions * 100.0);
+					break;
+				case PAGE_WRITECOPY:
+					printf("  PAGE_WRITECOPY: %d (%f%%)\r\n", Itr2->second, (float)Itr2->second / nTotalRegions * 100.0);
+					break;
+				case PAGE_EXECUTE:
+					printf("  PAGE_EXECUTE: %d (%f%%)\r\n", Itr2->second, (float)Itr2->second / nTotalRegions * 100.0);
+					break;
+				case PAGE_NOACCESS:
+					printf("  PAGE_NOACCESS: %d (%f%%)\r\n", Itr2->second, (float)Itr2->second / nTotalRegions * 100.0);
+					break;
+				default:
+					printf("  0x%08x: %d (%f%%)\r\n", Itr2->first, Itr2->second, (float)Itr2->second / nTotalRegions * 100.0);
+					break;
+				}
+			}
+		}
+	}
+};
+
+enum class SelectedProcessType {
+	InvalidPid = 0,
+	SpecificPid,
+	AllPids,
+	SelfPid
+};
+
+enum class SelectedOutputType {
+	InvalidOutput = 0,
+	Raw,
+	Statistics
+};
+
 int32_t wmain(int32_t nArgc, const wchar_t* pArgv[]) {
-	if (nArgc < 3) {
-		printf("* Usage: %ws [PID \"current\" or \"all\" to scan all processes] [\"enum\" to output details or \"stats\" to give statistics]\r\n", pArgv[0]);
+	if (nArgc < 5) {
+		printf("* Usage: %ws --target (PID) --output-type (see remarks) --base-address (scans only the memory in the region address specified)\r\n\r\n"
+			"  Remarks:\r\n"
+			"  ~ PID field may be \"self\" to target the current process, an arbitrart PID, or \"*\" to target all accessible processes.\r\n"
+			"  ~ Output type field may be \"raw\" to display all queried memory info for each region, or may be \"stats\" to gather statistically common memory characteristics among the target(s)\r\n", pArgv[0]);
 	}
 	else {
-		bool bScanAll = false, bStats = false;
-		uint32_t dwPid = GetCurrentProcessId();
+		SelectedProcessType ProcType = SelectedProcessType::InvalidPid;
+		SelectedOutputType OutputType = SelectedOutputType::InvalidOutput;
+		uint32_t dwSelectedPid = 0;
 
-		if (_wcsicmp(pArgv[1], L"all") == 0) {
-			bScanAll = true;
-		}
-		else if (_wcsicmp(pArgv[1], L"current") != 0) {
-			dwPid = _wtoi(pArgv[1]);
-		}
-		if (_wcsicmp(pArgv[2], L"stats") == 0) {
-			bStats = true;
-		}
-
-		if (!bScanAll) {
-			if (!bStats) {
-				EnumProcessMem(dwPid, (uint8_t*)-1);
+		for (int32_t nX = 0; nX < nArgc; nX++) {
+			if (_wcsicmp(pArgv[nX], L"--target") == 0) {
+				if (_wcsicmp(pArgv[nX + 1], L"self") == 0) {
+					ProcType = SelectedProcessType::SelfPid;
+					dwSelectedPid = GetCurrentProcessId();
+				}
+				else if (_wcsicmp(pArgv[nX + 1], L"*") == 0) {
+					ProcType = SelectedProcessType::AllPids;
+				}
+				else {
+					ProcType = SelectedProcessType::SpecificPid;
+					dwSelectedPid = _wtoi(pArgv[nX + 1]);
+				}
 			}
-			else {
-				//
+			else if (_wcsicmp(pArgv[nX], L"--output-type") == 0) {
+				if (_wcsicmp(pArgv[nX + 1], L"raw") == 0) {
+					OutputType = SelectedOutputType::Raw;
+				}
+				else if (_wcsicmp(pArgv[nX + 1], L"stats") == 0) {
+					OutputType = SelectedOutputType::Statistics;
+				}
+			}
+		}
+
+		if (ProcType == SelectedProcessType::InvalidPid) {
+			printf("- Invalid target process type selected\r\n");
+			return 0;
+		}
+
+		if (OutputType == SelectedOutputType::InvalidOutput) {
+			printf("- Invalid scan output type selected\r\n");
+			return 0;
+		}
+
+		if (ProcType == SelectedProcessType::SpecificPid || ProcType == SelectedProcessType::SelfPid) {
+			list<MEMORY_BASIC_INFORMATION*> ProcessMem = QueryProcessMem(dwSelectedPid);
+
+			if (OutputType == SelectedOutputType::Raw) {
+				EnumProcessMem(dwSelectedPid, (uint8_t*)-1);
+			}
+			else if (OutputType == SelectedOutputType::Statistics) {
+				MemoryPermissionRecord* MemPermRec = new MemoryPermissionRecord(ProcessMem);
+				MemPermRec->ShowRecords();
 			}
 		}
 		else {
 			PROCESSENTRY32W ProcEntry = { 0 };
 			HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-			list<MEMORY_BASIC_INFORMATION*> ImageMem, MapMem, PrivateMem;
+			MemoryPermissionRecord* MemPermRec = nullptr;
 
-			if (hSnapshot != nullptr)
-			{
+			if (hSnapshot != nullptr) {
 				ProcEntry.dwSize = sizeof(PROCESSENTRY32W);
 
-				if (Process32FirstW(hSnapshot, &ProcEntry))
-				{
+				if (Process32FirstW(hSnapshot, &ProcEntry)) {
 					do
 					{
-						if (!bStats) {
+						if (OutputType == SelectedOutputType::Raw) {
 							EnumProcessMem(ProcEntry.th32ProcessID, (uint8_t*)-1);
 						}
-						else {
+						else if (OutputType == SelectedOutputType::Statistics) {
 							list<MEMORY_BASIC_INFORMATION*> ProcessMem = QueryProcessMem(ProcEntry.th32ProcessID);
-
-							for (list<MEMORY_BASIC_INFORMATION*>::const_iterator i = ProcessMem.begin(); i != ProcessMem.end(); ++i) {
-								if ((*i)->Type == MEM_IMAGE) {
-									ImageMem.push_back(*i);
-								}
-								else if ((*i)->Type == MEM_MAPPED) {
-									MapMem.push_back(*i);
-								}
-								else if ((*i)->Type == MEM_PRIVATE) {
-									PrivateMem.push_back(*i);
-								}
+							if (MemPermRec == nullptr) {
+								MemPermRec = new MemoryPermissionRecord(ProcessMem);
+							}
+							else {
+								MemPermRec->UpdateMap(ProcessMem);
 							}
 						}
 					} while (Process32NextW(hSnapshot, &ProcEntry));
@@ -161,131 +288,9 @@ int32_t wmain(int32_t nArgc, const wchar_t* pArgv[]) {
 				printf("- Failed to create process list snapshot (error %d)\r\n", GetLastError());
 			}
 
-			list<MEMORY_BASIC_INFORMATION*> Readonly, ReadWrite, ReadExec, ReadWriteExec, ExecWriteCopy, WriteCopy, Exec;
-
-			for (list<MEMORY_BASIC_INFORMATION*>::const_iterator i = ImageMem.begin(); i != ImageMem.end(); ++i) {
-				switch ((*i)->Protect) {
-				case PAGE_READONLY:
-					Readonly.push_back(*i);
-					break;
-				case PAGE_READWRITE:
-					ReadWrite.push_back(*i);
-					break;
-				case PAGE_EXECUTE_READ:
-					ReadExec.push_back(*i);
-					break;
-				case PAGE_EXECUTE_READWRITE:
-					ReadWriteExec.push_back(*i);
-					break;
-				case PAGE_EXECUTE_WRITECOPY:
-					ExecWriteCopy.push_back(*i);
-					break;
-				case PAGE_WRITECOPY:
-					WriteCopy.push_back(*i);
-					break;
-				case PAGE_EXECUTE:
-					Exec.push_back(*i);
-					break;
-				default: break;
-				}
+			if (MemPermRec != nullptr) {
+				MemPermRec->ShowRecords();
 			}
-
-			printf("~ Image memory (%d total):\r\n", ImageMem.size());
-			printf("  PAGE_READONLY: %d (%f%%)\r\n", Readonly.size(), (float)Readonly.size() / ImageMem.size() * 100.0);
-			printf("  PAGE_READWRITE: %d (%f%%)\r\n", ReadWrite.size(), (float)ReadWrite.size() / ImageMem.size() * 100.0);
-			printf("  PAGE_EXECUTE_READ: %d (%f%%)\r\n", ReadExec.size(), (float)ReadExec.size() / ImageMem.size() * 100.0);
-			printf("  PAGE_EXECUTE_READWRITE: %d (%f%%)\r\n", ReadWriteExec.size(), (float)ReadWriteExec.size() / ImageMem.size() * 100.0);
-			printf("  PAGE_EXECUTE_WRITECOPY: %d (%f%%)\r\n", ExecWriteCopy.size(), (float)ExecWriteCopy.size() / ImageMem.size() * 100.0);
-			printf("  PAGE_WRITECOPY: %d (%f%%)\r\n", WriteCopy.size(), (float)WriteCopy.size() / ImageMem.size() * 100.0);
-			printf("  PAGE_EXECUTE: %d (%f%%)\r\n", Exec.size(), (float)Exec.size() / ImageMem.size() * 100.0);
-
-			Readonly.clear();
-			ReadWrite.clear();
-			ReadExec.clear();
-			ReadWriteExec.clear();
-			ExecWriteCopy.clear();
-			WriteCopy.clear();
-			Exec.clear();
-
-			for (list<MEMORY_BASIC_INFORMATION*>::const_iterator i = MapMem.begin(); i != MapMem.end(); ++i) {
-				switch ((*i)->Protect) {
-				case PAGE_READONLY:
-					Readonly.push_back(*i);
-					break;
-				case PAGE_READWRITE:
-					ReadWrite.push_back(*i);
-					break;
-				case PAGE_EXECUTE_READ:
-					ReadExec.push_back(*i);
-					break;
-				case PAGE_EXECUTE_READWRITE:
-					ReadWriteExec.push_back(*i);
-					break;
-				case PAGE_EXECUTE_WRITECOPY:
-					ExecWriteCopy.push_back(*i);
-					break;
-				case PAGE_WRITECOPY:
-					WriteCopy.push_back(*i);
-					break;
-				case PAGE_EXECUTE:
-					Exec.push_back(*i);
-					break;
-				default: break;
-				}
-			}
-
-			printf("~ Mapped memory (%d total):\r\n", MapMem.size());
-			printf("  PAGE_READONLY: %d (%f%%)\r\n", Readonly.size(), (float)Readonly.size() / MapMem.size() * 100.0);
-			printf("  PAGE_READWRITE: %d (%f%%)\r\n", ReadWrite.size(), (float)ReadWrite.size() / MapMem.size() * 100.0);
-			printf("  PAGE_EXECUTE_READ: %d (%f%%)\r\n", ReadExec.size(), (float)ReadExec.size() / MapMem.size() * 100.0);
-			printf("  PAGE_EXECUTE_READWRITE: %d (%f%%)\r\n", ReadWriteExec.size(), (float)ReadWriteExec.size() / MapMem.size() * 100.0);
-			printf("  PAGE_EXECUTE_WRITECOPY: %d (%f%%)\r\n", ExecWriteCopy.size(), (float)ExecWriteCopy.size() / MapMem.size() * 100.0);
-			printf("  PAGE_WRITECOPY: %d (%f%%)\r\n", WriteCopy.size(), (float)WriteCopy.size() / MapMem.size() * 100.0);
-			printf("  PAGE_EXECUTE: %d (%f%%)\r\n", Exec.size(), (float)Exec.size() / MapMem.size() * 100.0);
-
-			Readonly.clear();
-			ReadWrite.clear();
-			ReadExec.clear();
-			ReadWriteExec.clear();
-			ExecWriteCopy.clear();
-			WriteCopy.clear();
-			Exec.clear();
-
-			for (list<MEMORY_BASIC_INFORMATION*>::const_iterator i = PrivateMem.begin(); i != PrivateMem.end(); ++i) {
-				switch ((*i)->Protect) {
-				case PAGE_READONLY:
-					Readonly.push_back(*i);
-					break;
-				case PAGE_READWRITE:
-					ReadWrite.push_back(*i);
-					break;
-				case PAGE_EXECUTE_READ:
-					ReadExec.push_back(*i);
-					break;
-				case PAGE_EXECUTE_READWRITE:
-					ReadWriteExec.push_back(*i);
-					break;
-				case PAGE_EXECUTE_WRITECOPY:
-					ExecWriteCopy.push_back(*i);
-					break;
-				case PAGE_WRITECOPY:
-					WriteCopy.push_back(*i);
-					break;
-				case PAGE_EXECUTE:
-					Exec.push_back(*i);
-					break;
-				default: break;
-				}
-			}
-
-			printf("~ Private memory (%d total):\r\n", PrivateMem.size());
-			printf("  PAGE_READONLY: %d (%f%%)\r\n", Readonly.size(), (float)Readonly.size() / PrivateMem.size() * 100.0);
-			printf("  PAGE_READWRITE: %d (%f%%)\r\n", ReadWrite.size(), (float)ReadWrite.size() / PrivateMem.size() * 100.0);
-			printf("  PAGE_EXECUTE_READ: %d (%f%%)\r\n", ReadExec.size(), (float)ReadExec.size() / PrivateMem.size() * 100.0);
-			printf("  PAGE_EXECUTE_READWRITE: %d (%f%%)\r\n", ReadWriteExec.size(), (float)ReadWriteExec.size() / PrivateMem.size() * 100.0);
-			printf("  PAGE_EXECUTE_WRITECOPY: %d (%f%%)\r\n", ExecWriteCopy.size(), (float)ExecWriteCopy.size() / PrivateMem.size() * 100.0);
-			printf("  PAGE_WRITECOPY: %d (%f%%)\r\n", WriteCopy.size(), (float)WriteCopy.size() / PrivateMem.size() * 100.0);
-			printf("  PAGE_EXECUTE: %d (%f%%)\r\n", Exec.size(), (float)Exec.size() / PrivateMem.size() * 100.0);
 		}
 	}
 }
