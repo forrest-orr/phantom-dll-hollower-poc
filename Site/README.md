@@ -1,0 +1,1 @@
+This site was saved using Firefox, and only appears to render correctly on Firefox and Chrome. IE and Edge will not handle the .html correctly.
