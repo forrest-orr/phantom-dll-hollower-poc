@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+</head>
+<body style="background-color: transparent; overflow: hidden;">
+<script>
+
+  function _getViewer() {
+//    if(document.domain.endsWith('wix.com')) document.domain = 'wix.com';
+//    if(document.domain.endsWith("wixsite.com")) document.domain = 'wixsite.com';
+    try {//align domain
+      var parentDomain = window.parent.parent.document.domain; //test
+      window.parent.parent.document.domain = parentDomain; //this needs to be set if the domain was never set (happens on complex domains)
+      window.document.domain = parentDomain;
+    } catch (e) {
+      //failed on parent domain, swich to higher level domain and try again
+      var originalDomain = window.document.domain;
+      var parentDomain;
+      try {
+        parentDomain = originalDomain.replace(originalDomain.split('.')[0] + '.', '');
+        window.document.domain = parentDomain;
+        if (window.document.domain !== window.parent.parent.document.domain) {
+          console.log('asdk - domains do not match. me: ' + window.document.domain + ' parent ' + window.parent.parent.document.domain);
+        }
+      } catch (e) {
+        //failed on parent domain again, we are probably on subdomain, swich to higher level domain and try again
+        var originalDomain = parentDomain;
+        try {
+          parentDomain = originalDomain.replace(originalDomain.split('.')[0] + '.', '');
+          window.document.domain = parentDomain;
+          if (window.document.domain !== window.parent.parent.document.domain) {
+            console.log('asdk - domains do not match. me: ' + window.document.domain + ' parent ' + window.parent.parent.document.domain);
+          }
+        } catch (e) {
+          console.log('asdk - failed to match domain to ' + parentDomain + ' back to ' + originalDomain);
+          window.document.domain = originalDomain;//no go, back to original
+        }
+      }
+    }
+    return window.parent.parent;
+  }
+
+  function _setAttribute(comp, propName, propValue) {
+    if (!comp.getAttribute(propName + "_o")) comp.setAttribute(propName + "_o", comp.getAttribute(propName));
+    comp.setAttribute(propName, propValue);
+  }
+
+  function _restoreAttribute(comp, propName) {
+    if (comp.getAttribute(propName + "_o")) {
+      comp.setAttribute(propName, comp.getAttribute(propName + "_o"));
+      comp.removeAttribute(propName + "_o");
+    }
+  }
+
+  function _setWidgetHeight(viewer, compId, heightNum) {
+    viewer.postMessage('{"intent":"TPA2","callId":0,"type":"heightChanged","compId":"' + compId + '","deviceType":"mobile","data":{"height":' + heightNum + ',"version":"1.67.0"}}',"*");
+  }
+
+
+
+  var setWidgetFullScreenHandler = null;
+  function setWidgetFullScreen(compId, bgColor, isFullScreen) {
+    var viewer = _getViewer();
+    if (isFullScreen) {
+      if (!setWidgetFullScreenHandler) {
+        //add setTimeout to prevent santa patcher to resize the widget on window resize after our fix to the height (bug fix for ios with floating safari controls)
+        setWidgetFullScreenHandler = function() { _setWidgetFullScreen(viewer, compId, bgColor, isFullScreen); };
+      }
+      viewer.addEventListener('resize', setWidgetFullScreenHandler);
+    } else {
+      if (setWidgetFullScreenHandler) {
+        viewer.removeEventListener('resize', setWidgetFullScreenHandler);
+        setWidgetFullScreenHandler = null;
+      }
+    }
+    return _setWidgetFullScreen(viewer, compId, bgColor, isFullScreen);
+  }
+
+  function _setWidgetFullScreen(viewer, compId, bgColor, isFullScreen) {
+
+    var fDoc = viewer.document;
+    var comp = fDoc.getElementById(compId).childNodes[0];
+
+    var width = "320px";
+    var heightNum = fDoc.body.getBoundingClientRect().height;
+    var height = "" + (heightNum) + "px";
+
+    if (comp) {
+      setTimeout(function(){
+        //sometimes on ios setting the height to the exact size of the screen is not working - so first send -1
+        _setWidgetHeight(viewer, compId, (heightNum - 1));
+        _setWidgetHeight(viewer, compId, heightNum);
+      }, 1000);
+      setTimeout(function(){
+        _setWidgetHeight(viewer, compId, (heightNum - 1));
+        _setWidgetHeight(viewer, compId, heightNum);
+      }, 2000);
+      setTimeout(function(){
+        _setWidgetHeight(viewer, compId, heightNum);
+      }, 3000);
+
+      if (isFullScreen) {
+        fDoc.body.classList.add('fullScreenMode', 'fullScreenMode-scrollable');
+        console.log('asdk setHeight of comp Id to', compId, height);
+        _setAttribute(comp, 'style', 'position: fixed; top: 0; left: 0px; width: 100%;height:100%;z-index: 1004; background-color: ' + bgColor + ';'); //z-index 1004 to be bellow the lightbox (1005)
+        _setAttribute(comp, 'width', width);
+        _setAttribute(comp, 'height', height);
+        _setAttribute(comp.parentNode, 'style', 'position: fixed; top: 0; left: undefined; width: ' + width + ';height: ' + height + ';z-index: 1004; background-color: ' + bgColor + ';');
+      } else {
+        fDoc.body.classList.remove('fullScreenMode', 'fullScreenMode-scrollable');
+        _restoreAttribute(comp, 'style');
+        _restoreAttribute(comp, 'width');
+        _restoreAttribute(comp, 'height');
+        _restoreAttribute(comp.parentNode, 'style');
+      }
+    } else {
+      console.error("Component " + compId + "Not found");
+    }
+  }
+
+  var setWidgetFixedOnBottomHandler = null;
+  function setWidgetFixedOnBottom(compId, isEnabled, height) {
+    var viewer = _getViewer();
+    if (isEnabled) {
+      //add setTimeout to prevent santa patcher to resize the widget on window resize after our fix to the height (bug fix for ios with floating safari controls)
+      if (setWidgetFixedOnBottomHandler) {
+        viewer.removeEventListener('resize', setWidgetFixedOnBottomHandler);
+      }
+      setWidgetFixedOnBottomHandler = function() { _setWidgetFixedOnBottom(viewer, compId, isEnabled, height); };
+      viewer.addEventListener('resize', setWidgetFixedOnBottomHandler);
+    } else {
+      if (setWidgetFixedOnBottomHandler) {
+        viewer.removeEventListener('resize', setWidgetFixedOnBottomHandler);
+        setWidgetFixedOnBottomHandler = null;
+      }
+    }
+    return _setWidgetFixedOnBottom(viewer, compId, isEnabled, height);
+  }
+
+  function _createClassIfNeeded(fDoc, styleId, styleItem) {
+    if (!fDoc.getElementById(styleId)) {
+      var style = fDoc.createElement('style');
+      style.type = 'text/css';
+      style.id = styleId;
+      style.innerHTML = styleItem;
+      fDoc.head.appendChild(style);
+      //console.log('style added ' + i + ' on ' + fDoc.location.origin + fDoc.location.pathname)
+    } else {
+      //console.log('style exists ' + i + ' on ' + fDoc.location.origin + fDoc.location.pathname)
+    }
+  }
+
+  function _setWidgetFixedOnBottom(viewer, compId, isEnabled, heightNum) {
+
+    var fDoc = viewer.document;
+    var comp = fDoc.getElementById(compId).childNodes[0];
+    var widthNum = fDoc.body.getBoundingClientRect().width;
+    var width = "" + (widthNum) + "px";
+    var height = "" + (heightNum) + "px";
+
+    if (comp) {
+      if (isEnabled) {
+        _createClassIfNeeded(fDoc, 'widget-on-bottom', '.topAuto { top: auto !important; }');
+        console.log('asdk _setWidgetFixedOnBottom of comp Id to', compId, height);
+        _setAttribute(comp, 'style', 'position: fixed; bottom: 0; left: 0; right: 0; width: 100%;height:' + height + ';z-index: 1004; transform: translateZ(0);');
+        _setAttribute(comp, 'width', width);
+        _setAttribute(comp, 'height', height);
+        _setAttribute(comp.parentNode, 'style', 'position: fixed; bottom: 0; left: 0; right: 0; width: ' + width + ';height: ' + height + ';z-index: 1004;');
+        comp.parentNode.classList.add('topAuto');
+      } else {
+        _restoreAttribute(comp, 'style');
+        _restoreAttribute(comp, 'width');
+        _restoreAttribute(comp, 'height');
+        _restoreAttribute(comp.parentNode, 'style');
+        comp.parentNode.classList.remove('topAuto');
+      }
+    } else {
+      console.error("Component " + compId + "Not found");
+    }
+  }
+
+  ///this should be removed - too generic
+  function setWidgetCss(compId, setChildCss, css) {
+      try {
+		  var document = _getViewer().document;
+          var fDoc = setChildCss ?  document.childNodes[0] : document;
+          var comp = fDoc.getElementById(compId);
+
+          for (var attr in css) {
+              if (css.hasOwnProperty(attr)) {
+                  comp.style[attr] = css[attr];
+              }
+          }
+      } catch (e) {
+         console.error('Could not set Css for Widget', compId, css)
+      }
+  }
+
+  // Null content = revert to last value
+  function setViewportContent(content) {
+	  var document = _getViewer().document;
+	  var meta = document.getElementById('wixMobileViewport');
+
+	  // We'll save a stack of all the past values, so system can pass
+	  // null in a sequence and go back the tree
+	  var oldValueStackJson = meta.getAttribute('__prev_content') || "[]";
+	  var oldValueStack = JSON.parse(oldValueStackJson);
+
+	  if (content === null) {
+		  if (oldValueStack.length === 0) return;
+		  content = oldValueStack.pop();
+	  } else {
+		  var prev = meta.getAttribute('content');
+		  oldValueStack.push(prev);
+	  }
+
+	  meta.setAttribute('content', content);
+	  meta.setAttribute('__prev_content', JSON.stringify(oldValueStack));
+  }
+
+  window.onmessage = function (e) {
+      if(e.data) {
+        try{
+          var msg = JSON.parse(e.data);
+          console.log('on message: ', msg);
+          if(msg.method === 'setWidgetFullScreen') {
+            setWidgetFullScreen(msg.compId, msg.bgColor, msg.isFullScreen);
+          } else if(msg.method === 'setWidgetFixedOnBottom') {
+            setWidgetFixedOnBottom(msg.compId, msg.isEnabled, msg.height);
+          } else if(msg.method === 'setWidgetCss') {
+            setWidgetCss(msg.compId, msg.setChildCss, msg.css);
+          } else if(msg.method === 'setViewportContent') {
+            setViewportContent(msg.content);
+          } else {
+            console.log('Unsupported method', msg);
+          }
+
+        }catch(err) {
+//           console.error('Failed to execute ', err, e);
+        }
+      }
+  };
+
+</script>
+
+
+
+
+</body></html>
