@@ -200,7 +200,7 @@ enum class SelectedOutputType {
 
 int32_t wmain(int32_t nArgc, const wchar_t* pArgv[]) {
 	if (nArgc < 5) {
-		printf("* Usage: %ws --target (PID) --output-type (see remarks) --base-address (scans only the memory in the region address specified)\r\n\r\n"
+		printf("* Usage: %ws --target (PID) --output-type (see remarks)\r\n\r\n"
 			"  Remarks:\r\n"
 			"  ~ PID field may be \"self\" to target the current process, an arbitrart PID, or \"*\" to target all accessible processes.\r\n"
 			"  ~ Output type field may be \"raw\" to display all queried memory info for each region, or may be \"stats\" to gather statistically common memory characteristics among the target(s)\r\n", pArgv[0]);
